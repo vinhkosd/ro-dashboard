@@ -1,0 +1,16 @@
+{
+    "name": "admin/dashboard-theme",
+    "description": "RO Dashboard",
+    "type": "project",
+    "require": {
+        "illuminate/database": "^8.45",
+        "illuminate/events": "^8.45",
+        "nesbot/carbon": "^2.48"
+    },
+    "authors": [
+        {
+            "name": "vinhkosd",
+            "email": "vinh.le@robustaeng.com"
+        }
+    ]
+}

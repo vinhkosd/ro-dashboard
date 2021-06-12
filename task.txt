@@ -1,0 +1,25 @@
+-list account
+	-xem list
+	-sửa thông tin account(money,mail,pass,...)
+-log account
+	-xem log mua gói, nạp paypal account
+-check online
+	-list ra zoneid nào đang online có số lượng bao nhiêu người
+-emailverification
+	-xem list code xác nhận gửi về mail
+-xem danh sách gói, thêm gói, sửa gói, thêm loại gói
+-danh sách nạp paypal
+	-lọc theo các loại từ ngày tới ngày
+	-lọc theo các loại từ tháng tới tháng
+	-lọc theo các loại từ năm tới năm
+	-...
+	-thống kê nạp theo bộ lọc, theo ô tìm kiếm
+
+
+$('.modal-large1 div div').html()
+$('.modal-large1 div div[class=modal-content]').html()
+$('.modal-large1 div div[class=modal-content] h5[class=modal-title]').html()
+$('.modal-large1 div div[class=modal-content] div[class=modal-body]').html()
+$('.modal-large1').modal('show')
+$('.modal-large1').modal('toggle')
+$('.modal-large1').modal('hide')
