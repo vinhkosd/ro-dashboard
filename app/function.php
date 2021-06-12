@@ -41,13 +41,6 @@ function renderBody() {
   }
   $path = $_SERVER['REQUEST_URI'];//remove / slash
   $path = parse_url($path, PHP_URL_PATH);//only get url path
-  // var_dump(__DIR__);
-  // var_dump((__DIR__."/../".realFilePath().$path.".php"));
-  // var_dump(file_exists(__DIR__."/../".realFilePath().$path.".php"));
-  // var_dump($_SERVER);
-  // die();
-  // var_dump(__DIR__."/".repeatSlash().$path.".php");
-  // die();
   if($path && file_exists(__DIR__."/../".realFilePath().$path.".php")){
     include(__DIR__."/../".realFilePath().$path.".php");
   }
