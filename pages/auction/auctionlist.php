@@ -48,7 +48,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addAuctionLabel">Sửa auctionItem</h5>
+                <h5 class="modal-title" id="addAuctionLabel">Thêm auctionItem</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -57,11 +57,14 @@
                 <form id="addAuctionForm">
                     <div class="form-group">
                         <label for="batchid" class="col-form-label">BatchID:</label>
-                        <input type="text" class="form-control" name="batchid" value=1 readonly>
+                        <input type="text" class="form-control" name="batchid" readonly>
                     </div>
                     <div class="form-group">
                         <label for="itemid" class="col-form-label">ItemID:</label>
-                        <input type="text" class="form-control" name="itemid" required>
+                        <!-- <input type="text" class="form-control" name="itemid" required> -->
+                        <select class="form-control" name="itemid">
+                            <option value=0 selected>Chọn itemid</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="base_price" class="col-form-label">BasePrice:</label>
@@ -123,7 +126,10 @@
                     </div>
                     <div class="form-group">
                         <label for="itemid" class="col-form-label">ItemID:</label>
-                        <input type="text" class="form-control" name="itemid" readonly>
+                        <!-- <input type="text" class="form-control" name="itemid" readonly> -->
+                        <select class="form-control" name="itemid">
+                            <option value=0 selected>Chọn itemid</option>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label for="base_price" class="col-form-label">BasePrice:</label>
@@ -250,21 +256,45 @@
         loadItemList();
         $('#reloadDataButton').click(function(e, t) {
             loadItemList();
-        })
+        });
+
+        $('#addAuction').on('show.bs.modal', function(event) {
+            var modal = $(this);
+           $.post("<?php homePath()?>ajax/getauctionbatchid.php", $('#editAuctionForm').serialize(), (data) => {
+                modal.find('.modal-body input[name=batchid]').val(data['id']);
+            }, "json");
+
+            $.get("<?php homePath()?>ajax/listauctionitem.php", (data) => {
+                var htmlListItemID = '';
+                var itemList = data.itemid;
+                var htmlListItemID = itemList.map(item=> '<option value="'+item.itemid+'">'+item.itemid+' - '+item.name_en+'</option>').join('');
+                modal.find('.modal-body select[name=itemid]').html(htmlListItemID);
+            }, "json");
+            
+        });
 
         $('#editAuction').on('show.bs.modal', function(event) {
             var button = $(event.relatedTarget) // Button that triggered the modal
-            console.log(button.data('account'));
             var auctionData = (button.data('account')) // Extract info from data-* attributes
-            // If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-            // Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
             var modal = $(this);
+
+            $.get("<?php homePath()?>ajax/listauctionitem.php", (data) => {
+                var htmlListItemID = '';
+                var itemList = data.itemid;
+                var itemNameList = data.itemname;
+                var auctionItemName = itemNameList[auctionData['itemid']] ? itemNameList[auctionData['itemid']].name_en : '';
+                var htmlListItemID = itemList.map(item=> (auctionData['itemid'] != item.itemid) ? '<option value="'+item.itemid+'">'+item.itemid+' - '+item.name_en+'</option>' : '').join('');
+                htmlListItemID = '<option selected value="'+auctionData['itemid']+'">' + auctionData['itemid'] + ' - ' + auctionItemName + '</option>' + htmlListItemID;
+                modal.find('.modal-body select[name=itemid]').html(htmlListItemID);
+            }, "json");
+
             Object.keys(auctionData).map(item => {
-                if (item !== 'password') {
-                    modal.find('.modal-body input[name=' + item + ']').val(auctionData[item]);
-                    modal.find('.modal-body select[name=' + item + ']').val(auctionData[item]);
-                }
-            })
+                    if (item !== 'password') {
+                        modal.find('.modal-body input[name=' + item + ']').val(auctionData[item]);
+                        modal.find('.modal-body select[name=' + item + ']').val(auctionData[item]);
+                    }
+                })
+            
             modal.find('.modal-title').text('Edit item : ' + auctionData['itemid'])
         });
 
