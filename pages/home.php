@@ -255,7 +255,7 @@ use Carbon\Carbon;
           var listDate = [];
 
           var date = new Date();
-          var countDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+          var countDayOfMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
           for(var i = 1;i <= countDayOfMonth; i++) {
             // listDate.push(i);
             listDate.push(`Ngày ${i}`);
