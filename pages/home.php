@@ -1,4 +1,8 @@
-			<div class="page-content">
+<?php
+use Models\PaymentLogs;
+use Carbon\Carbon;
+?>			
+      <div class="page-content">
 
         <div class="d-flex justify-content-between align-items-center flex-wrap grid-margin">
           <div>
@@ -27,11 +31,11 @@
         <div class="row">
           <div class="col-12 col-xl-12 stretch-card">
             <div class="row flex-grow">
-              <div class="col-md-4 grid-margin stretch-card">
+              <div class="col-md-3 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
-                      <h6 class="card-title mb-0">New Customers</h6>
+                      <h6 class="card-title mb-0">Nạp thẻ</h6>
                       <div class="dropdown mb-2">
                         <button class="btn p-0" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
@@ -47,26 +51,45 @@
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2">3,897</h3>
+                      <?php
+                        // use Illuminate\Database\Capsule\Manager as DB;
+                        $yesterday = Carbon::yesterday();
+                        $weekStartDate = Carbon::now()->startOfWeek();
+                        $weekEndDate = Carbon::now()->endOfWeek();
+
+                        $prevWeekStartDate = Carbon::now()->subWeek()->startOfWeek();
+                        $prevWeekEndDate = Carbon::now()->subWeek()->endOfWeek();
+                        // DB::enableQueryLog(); // Enable query log
+                        $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->count();
+                        $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->count();
+                        $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
+                        // var_dump(DB::getQueryLog());
+                        // die();
+                        $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
+                        $growPayment = round(($paymentCountYesterday ? (($paymentCountToday - $paymentCountYesterday) / $paymentCountYesterday) : 1) * 100, 1);
+
+                        $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
+                      ?>
+                        <h3 class="mb-2"><?php echo number_format($paymentCountToday);?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span>+3.3%</span>
-                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                            <span><?php echo $growPayment;?>%</span>
+                            <i data-feather="<?php echo ($growPayment >= 0 ? "arrow-up" : "arrow-down"); ?>" class="icon-sm mb-1"></i>
                           </p>
                         </div>
                       </div>
-                      <div class="col-6 col-md-12 col-xl-7">
+                      <!-- <div class="col-6 col-md-12 col-xl-7">
                         <div id="apexChart1" class="mt-md-3 mt-xl-0"></div>
-                      </div>
+                      </div> -->
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-4 grid-margin stretch-card">
+              <div class="col-md-3 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
-                      <h6 class="card-title mb-0">New Orders</h6>
+                      <h6 class="card-title mb-0">Nạp hôm qua</h6>
                       <div class="dropdown mb-2">
                         <button class="btn p-0" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
@@ -82,26 +105,26 @@
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2">35,084</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentCountYesterday);?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-danger">
-                            <span>-2.8%</span>
+                            <!-- <span>-2.8%</span> -->
                             <i data-feather="arrow-down" class="icon-sm mb-1"></i>
                           </p>
                         </div>
                       </div>
                       <div class="col-6 col-md-12 col-xl-7">
-                        <div id="apexChart2" class="mt-md-3 mt-xl-0"></div>
+                        <!-- <div id="apexChart2" class="mt-md-3 mt-xl-0"></div> -->
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <div class="col-md-4 grid-margin stretch-card">
+              <div class="col-md-3 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
-                      <h6 class="card-title mb-0">Growth</h6>
+                      <h6 class="card-title mb-0">Online</h6>
                       <div class="dropdown mb-2">
                         <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
@@ -117,11 +140,46 @@
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2">89.87%</h3>
+                        <h3 class="mb-2">1</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span>+2.8%</span>
-                            <i data-feather="arrow-up" class="icon-sm mb-1"></i>
+                            <!-- <span>+2.8%</span> -->
+                            <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
+                          </p>
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-12 col-xl-7">
+                        <!-- <div id="apexChart3" class="mt-md-3 mt-xl-0"></div> -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline">
+                      <h6 class="card-title mb-0">Tổng nạp tuần</h6>
+                      <div class="dropdown mb-2">
+                        <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2">
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 col-md-12 col-xl-5">
+                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek).'.00 USD';?></h3>
+                        <div class="d-flex align-items-baseline">
+                          <p class="text-success">
+                            <span><?php echo $growWeekPayment;?>%</span>
+                            <i data-feather="<?php echo ($growWeekPayment >= 0 ? "arrow-up" : "arrow-down"); ?>" class="icon-sm mb-1"></i>
                           </p>
                         </div>
                       </div>
@@ -141,7 +199,7 @@
             <div class="card overflow-hidden">
               <div class="card-body">
                 <div class="d-flex justify-content-between align-items-baseline mb-4 mb-md-3">
-                  <h6 class="card-title mb-0">Revenue</h6>
+                  <h6 class="card-title mb-0">Thống kê</h6>
                   <div class="dropdown">
                     <button class="btn p-0" type="button" id="dropdownMenuButton3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
@@ -157,276 +215,112 @@
                 </div>
                 <div class="row align-items-start mb-2">
                   <div class="col-md-7">
-                    <p class="text-muted tx-13 mb-3 mb-md-0">Revenue is the income that a business has from its normal business activities, usually from the sale of goods and services to customers.</p>
+                    <button type="button" class="btn btn-primary" id="paymentChart">
+                      Nạp thẻ
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="registerChart">
+                      Số lượng đăng ký
+                    </button>
                   </div>
                   <div class="col-md-5 d-flex justify-content-md-end">
                     <div class="btn-group mb-3 mb-md-0" role="group" aria-label="Basic example">
-                      <button type="button" class="btn btn-outline-primary">Today</button>
-                      <button type="button" class="btn btn-outline-primary d-none d-md-block">Week</button>
-                      <button type="button" class="btn btn-primary">Month</button>
-                      <button type="button" class="btn btn-outline-primary">Year</button>
+                      <!-- <button type="button" class="btn btn-outline-primary">Ngày</button> -->
+                      <!-- <button type="button" class="btn btn-outline-primary d-none d-md-block">Tuần</button> -->
+                      <!-- <button type="button" class="btn btn-primary">Tháng</button> -->
+                      <!-- <button type="button" class="btn btn-outline-primary">Năm</button> -->
                     </div>
                   </div>
                 </div>
                 <div class="flot-wrapper">
-                  <div id="flotChart1" class="flot-chart"></div>
+                  <!-- <div id="flotChart1" class="flot-chart"></div> -->
+                  <div id="chartPaymentRegister"></div>
                 </div>
               </div>
             </div>
           </div>
         </div> <!-- row -->
-
-        <div class="row">
-          <div class="col-lg-7 col-xl-8 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline mb-2">
-                  <h6 class="card-title mb-0">Monthly sales</h6>
-                  <div class="dropdown mb-2">
-                    <button class="btn p-0" type="button" id="dropdownMenuButton4" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton4">
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
-                    </div>
-                  </div>
-                </div>
-                <p class="text-muted mb-4">Sales are activities related to selling or the number of goods or services sold in a given time period.</p>
-                <div class="monthly-sales-chart-wrapper">
-                  <canvas id="monthly-sales-chart"></canvas>
-                </div>
-              </div> 
-            </div>
-          </div>
-          <div class="col-lg-5 col-xl-4 grid-margin stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline mb-2">
-                  <h6 class="card-title mb-0">Cloud storage</h6>
-                  <div class="dropdown mb-2">
-                    <button class="btn p-0" type="button" id="dropdownMenuButton5" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton5">
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
-                    </div>
-                  </div>
-                </div>
-                <div id="progressbar1" class="mx-auto"></div>
-                <div class="row mt-4 mb-3">
-                  <div class="col-6 d-flex justify-content-end">
-                    <div>
-                      <label class="d-flex align-items-center justify-content-end tx-10 text-uppercase font-weight-medium">Total storage <span class="p-1 ml-1 rounded-circle bg-primary-muted"></span></label>
-                      <h5 class="font-weight-bold mb-0 text-right">8TB</h5>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div>
-                      <label class="d-flex align-items-center tx-10 text-uppercase font-weight-medium"><span class="p-1 mr-1 rounded-circle bg-primary"></span> Used storage</label>
-                      <h5 class="font-weight-bold mb-0">6TB</h5>
-                    </div>
-                  </div>
-                </div>
-                <button class="btn btn-primary btn-block">Upgrade storage</button>
-              </div>
-            </div>
-          </div>
-        </div> <!-- row -->
-
-        <div class="row">
-          <div class="col-lg-5 col-xl-4 grid-margin grid-margin-xl-0 stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline mb-2">
-                  <h6 class="card-title mb-0">Inbox</h6>
-                  <div class="dropdown mb-2">
-                    <button class="btn p-0" type="button" id="dropdownMenuButton6" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton6">
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
-                    </div>
-                  </div>
-                </div>
-                <div class="d-flex flex-column">
-                  <a href="#" class="d-flex align-items-center border-bottom pb-3">
-                    <div class="mr-3">
-                      <img src="https://via.placeholder.com/35x35" class="rounded-circle wd-35" alt="user">
-                    </div>
-                    <div class="w-100">
-                      <div class="d-flex justify-content-between">
-                        <h6 class="text-body mb-2">Leonardo Payne</h6>
-                        <p class="text-muted tx-12">12.30 PM</p>
-                      </div>
-                      <p class="text-muted tx-13">Hey! there I'm available...</p>
-                    </div>
-                  </a>
-                  <a href="#" class="d-flex align-items-center border-bottom py-3">
-                    <div class="mr-3">
-                      <img src="https://via.placeholder.com/35x35" class="rounded-circle wd-35" alt="user">
-                    </div>
-                    <div class="w-100">
-                      <div class="d-flex justify-content-between">
-                        <h6 class="text-body mb-2">Carl Henson</h6>
-                        <p class="text-muted tx-12">02.14 AM</p>
-                      </div>
-                      <p class="text-muted tx-13">I've finished it! See you so..</p>
-                    </div>
-                  </a>
-                  <a href="#" class="d-flex align-items-center border-bottom py-3">
-                    <div class="mr-3">
-                      <img src="https://via.placeholder.com/35x35" class="rounded-circle wd-35" alt="user">
-                    </div>
-                    <div class="w-100">
-                      <div class="d-flex justify-content-between">
-                        <h6 class="text-body mb-2">Jensen Combs</h6>
-                        <p class="text-muted tx-12">08.22 PM</p>
-                      </div>
-                      <p class="text-muted tx-13">This template is awesome!</p>
-                    </div>
-                  </a>
-                  <a href="#" class="d-flex align-items-center border-bottom py-3">
-                    <div class="mr-3">
-                      <img src="https://via.placeholder.com/35x35" class="rounded-circle wd-35" alt="user">
-                    </div>
-                    <div class="w-100">
-                      <div class="d-flex justify-content-between">
-                        <h6 class="text-body mb-2">Amiah Burton</h6>
-                        <p class="text-muted tx-12">05.49 AM</p>
-                      </div>
-                      <p class="text-muted tx-13">Nice to meet you</p>
-                    </div>
-                  </a>
-                  <a href="#" class="d-flex align-items-center border-bottom py-3">
-                    <div class="mr-3">
-                      <img src="https://via.placeholder.com/35x35" class="rounded-circle wd-35" alt="user">
-                    </div>
-                    <div class="w-100">
-                      <div class="d-flex justify-content-between">
-                        <h6 class="text-body mb-2">Yaretzi Mayo</h6>
-                        <p class="text-muted tx-12">01.19 AM</p>
-                      </div>
-                      <p class="text-muted tx-13">Hey! there I'm available...</p>
-                    </div>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-7 col-xl-8 stretch-card">
-            <div class="card">
-              <div class="card-body">
-                <div class="d-flex justify-content-between align-items-baseline mb-2">
-                  <h6 class="card-title mb-0">Projects</h6>
-                  <div class="dropdown mb-2">
-                    <button class="btn p-0" type="button" id="dropdownMenuButton7" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton7">
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
-                      <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
-                    </div>
-                  </div>
-                </div>
-                <div class="table-responsive">
-                  <table class="table table-hover mb-0">
-                    <thead>
-                      <tr>
-                        <th class="pt-0">#</th>
-                        <th class="pt-0">Project Name</th>
-                        <th class="pt-0">Start Date</th>
-                        <th class="pt-0">Due Date</th>
-                        <th class="pt-0">Status</th>
-                        <th class="pt-0">Assign</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>1</td>
-                        <td>NobleUI jQuery</td>
-                        <td>01/01/2020</td>
-                        <td>26/04/2020</td>
-                        <td><span class="badge badge-danger">Released</span></td>
-                        <td>Leonardo Payne</td>
-                      </tr>
-                      <tr>
-                        <td>2</td>
-                        <td>NobleUI Angular</td>
-                        <td>01/01/2020</td>
-                        <td>26/04/2020</td>
-                        <td><span class="badge badge-success">Review</span></td>
-                        <td>Carl Henson</td>
-                      </tr>
-                      <tr>
-                        <td>3</td>
-                        <td>NobleUI ReactJs</td>
-                        <td>01/05/2020</td>
-                        <td>10/09/2020</td>
-                        <td><span class="badge badge-info-muted">Pending</span></td>
-                        <td>Jensen Combs</td>
-                      </tr>
-                      <tr>
-                        <td>4</td>
-                        <td>NobleUI VueJs</td>
-                        <td>01/01/2020</td>
-                        <td>31/11/2020</td>
-                        <td><span class="badge badge-warning">Work in Progress</span>
-                        </td>
-                        <td>Amiah Burton</td>
-                      </tr>
-                      <tr>
-                        <td>5</td>
-                        <td>NobleUI Laravel</td>
-                        <td>01/01/2020</td>
-                        <td>31/12/2020</td>
-                        <td><span class="badge badge-danger-muted text-white">Coming soon</span></td>
-                        <td>Yaretzi Mayo</td>
-                      </tr>
-                      <tr>
-                        <td>6</td>
-                        <td>NobleUI NodeJs</td>
-                        <td>01/01/2020</td>
-                        <td>31/12/2020</td>
-                        <td><span class="badge badge-primary">Coming soon</span></td>
-                        <td>Carl Henson</td>
-                      </tr>
-                      <tr>
-                        <td class="border-bottom">3</td>
-                        <td class="border-bottom">NobleUI EmberJs</td>
-                        <td class="border-bottom">01/05/2020</td>
-                        <td class="border-bottom">10/11/2020</td>
-                        <td class="border-bottom"><span class="badge badge-info-muted">Pending</span></td>
-                        <td class="border-bottom">Jensen Combs</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div> 
-            </div>
-          </div>
-        </div> <!-- row -->
-
 			</div>
+      <script type="text/javascript">
+      $(document).ready(function() {
+        var chartPaymentRegister = {destroy: () => {}};
+        function loadChartHome(type = 'payment') {
+          if(type !== 'payment') {
+            $('#paymentChart').removeClass('btn-primary').addClass('btn-outline-primary');
+            $('#registerChart').addClass('btn-primary').removeClass('btn-outline-primary');
+          } else {
+            $('#registerChart').removeClass('btn-primary').addClass('btn-outline-primary');
+            $('#paymentChart').addClass('btn-primary').removeClass('btn-outline-primary');
+          }
 
-			<!-- partial:partials/_footer.html -->
-			<footer class="footer d-flex flex-column flex-md-row align-items-center justify-content-between">
-				<p class="text-muted text-center text-md-left">Copyright © 2020 <a href="https://www.nobleui.com" target="_blank">NobleUI</a>. All rights reserved</p>
-				<p class="text-muted text-center text-md-left mb-0 d-none d-md-block">Handcrafted With <i class="mb-1 text-primary ml-1 icon-small" data-feather="heart"></i></p>
-			</footer>
-			<!-- partial -->
-		
+          var listDate = [];
+
+          var date = new Date();
+          var countDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 0).getDate();
+          for(var i = 1;i <= countDayOfMonth; i++) {
+            // listDate.push(i);
+            listDate.push(`Ngày ${i}`);
+          }
+
+          console.log(listDate);
+          var dataChart = [];
+          var urlPost = "<?php homePath()?>ajax/getpaymentchartdata.php";
+          if(type !== 'payment') {
+            urlPost = "<?php homePath()?>ajax/getregisterchartdata.php";
+          }
+          $.post(urlPost, (data) => {
+            console.log(data);
+            for(var i = 1;i <= countDayOfMonth; i++) {
+              dataChart.push(parseInt(data[i] && data[i].agg ? data[i].agg : 0, 10));
+            }
+            console.log(dataChart);
+            if($('#chartPaymentRegister').length) {
+              loadApexCharts(type, listDate, dataChart);
+            }
+          });
+        }
+
+        function loadApexCharts(type, listDate, dataSet){
+          var options = {
+          series: [{
+            name: type == 'payment' ? 'USD' : 'Đăng ký',
+            data: dataSet
+          }],
+            chart: {
+            height: 350,
+            type: 'line',
+            zoom: {
+              enabled: false
+            }
+          },
+          dataLabels: {
+            enabled: true
+          },
+          stroke: {
+            curve: 'straight'
+          },
+          title: {
+            text: `Thống kê ${type == 'payment' ? 'Nạp thẻ' : 'Đăng ký'} theo tháng`,
+            align: 'left'
+          },
+          grid: {
+            borderColor: '#e7e7e7',
+            row: {
+              colors: ['#f3f3f3', 'transparent'], // takes an array which will be repeated on columns
+              opacity: 0.5
+            },
+          },
+          xaxis: {
+            categories: listDate,
+          }
+          };
+          chartPaymentRegister.destroy();
+          chartPaymentRegister = new ApexCharts(document.querySelector("#chartPaymentRegister"), options);
+          chartPaymentRegister.render();
+      
+        }
+
+        loadChartHome();
+        $('#paymentChart').click(() => loadChartHome('payment'));
+        $('#registerChart').click(() => loadChartHome('register'));
+      });
+      </script>
