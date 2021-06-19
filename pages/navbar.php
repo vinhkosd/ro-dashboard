@@ -140,6 +140,9 @@
                 <li class="nav-item">
                   <a href="<?php homePath();?>pages/auction/auctionlist" class="nav-link">Đấu giá</a>
                 </li>
+                <li class="nav-item">
+                  <a href="<?php homePath();?>pages/package/packagelist" class="nav-link">Danh sách Gói</a>
+                </li>
                 <!-- <li class="nav-item">
                     <a href="<?php homePath();?>pages/advanced-ui/owl-carousel.html" class="nav-link">Owl carousel</a>
                   </li>
