@@ -60,21 +60,26 @@ use Carbon\Carbon;
                         $prevWeekStartDate = Carbon::now()->subWeek()->startOfWeek();
                         $prevWeekEndDate = Carbon::now()->subWeek()->endOfWeek();
                         // DB::enableQueryLog(); // Enable query log
+                        $paymentSumToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->sum('money');
+
                         $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->count();
+
+                        $paymentSumYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
+
                         $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->count();
                         $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
                         // var_dump(DB::getQueryLog());
                         // die();
                         $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
-                        $growPayment = round(($paymentCountYesterday ? (($paymentCountToday - $paymentCountYesterday) / $paymentCountYesterday) : 1) * 100, 1);
+                        // $growPayment = round(($paymentCountYesterday ? (($paymentCountToday - $paymentCountYesterday) / $paymentCountYesterday) : 1) * 100, 1);
 
                         $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
                       ?>
-                        <h3 class="mb-2"><?php echo number_format($paymentCountToday);?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo $growPayment;?>%</span>
-                            <i data-feather="<?php echo ($growPayment >= 0 ? "arrow-up" : "arrow-down"); ?>" class="icon-sm mb-1"></i>
+                            <span><?php echo number_format($paymentCountToday);?></span>
+                            <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
                       </div>
@@ -105,11 +110,11 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentCountYesterday);?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday);?>.00</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-danger">
-                            <!-- <span>-2.8%</span> -->
-                            <i data-feather="arrow-down" class="icon-sm mb-1"></i>
+                            <span><?php echo number_format($paymentCountYesterday);?></span>
+                            <!-- <i data-feather="arrow-down" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
                       </div>
