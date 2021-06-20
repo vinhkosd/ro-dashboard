@@ -62,18 +62,19 @@ use Carbon\Carbon;
                         // DB::enableQueryLog(); // Enable query log
                         $paymentSumToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->sum('money');
 
-                        $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->count();
+                        $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->groupBy('account')->count();
 
                         $paymentSumYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
 
-                        $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->count();
+                        $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->groupBy('account')->count();
                         $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
+                        $paymentCountWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->groupBy('account')->count();
                         // var_dump(DB::getQueryLog());
                         // die();
                         $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
                         // $growPayment = round(($paymentCountYesterday ? (($paymentCountToday - $paymentCountYesterday) / $paymentCountYesterday) : 1) * 100, 1);
 
-                        $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
+                        // $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
                       ?>
                         <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
@@ -180,11 +181,11 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek).'.00 USD';?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek).'.00$';?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo $growWeekPayment;?>%</span>
-                            <i data-feather="<?php echo ($growWeekPayment >= 0 ? "arrow-up" : "arrow-down"); ?>" class="icon-sm mb-1"></i>
+                            <span><?php echo $paymentCountWeek;?> người nạp</span>
+                            <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
                       </div>
