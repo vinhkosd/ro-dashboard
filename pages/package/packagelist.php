@@ -100,6 +100,13 @@ $listDepType = DepositType::get();
 $(document).ready(function() {
     var listType = JSON.parse('<?php echo json_encode($listDepType->keyBy('Type'));?>');
 function loadAccountList() {
+
+    var listBuyType = {
+        1: 'Mua hàng tuầN',
+        2: 'Mua 1 lần',
+        0: 'Mua không giới hạn'
+    }
+
 var currentPage = $('#dataTableExample').DataTable().page.info().page;
 console.log(currentPage);
 $('#dataTableExample').DataTable().destroy();
@@ -113,7 +120,7 @@ data.map(item => {
     htmlBody += `	<td>${listType[item.Type].Title}</td>\r\n`;
     htmlBody += `	<td>${item.Title}</td>\r\n`;
     htmlBody += `	<td>${item.Price}.00</td>\r\n`;
-    htmlBody += `	<td>${item.BuyType}</td>\r\n`;
+    htmlBody += `	<td>${listBuyType[item.BuyType]}</td>\r\n`;
     htmlBody += `	<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button></td>\r\n`;
     htmlBody += "</tr>\r\n";
 });
