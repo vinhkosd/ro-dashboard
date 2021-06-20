@@ -75,10 +75,10 @@ use Carbon\Carbon;
 
                         $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
                       ?>
-                        <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo number_format($paymentCountToday);?></span>
+                            <span><?php echo number_format($paymentCountToday);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
@@ -110,10 +110,10 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday);?>.00</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
-                          <p class="text-danger">
-                            <span><?php echo number_format($paymentCountYesterday);?></span>
+                          <p class="text-success">
+                            <span><?php echo number_format($paymentCountYesterday);?> người nạp</span>
                             <!-- <i data-feather="arrow-down" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
