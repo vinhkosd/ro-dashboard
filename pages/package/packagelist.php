@@ -102,7 +102,7 @@ $(document).ready(function() {
 function loadAccountList() {
 
     var listBuyType = {
-        1: 'Mua hàng tuầN',
+        1: 'Mua hàng tuần',
         2: 'Mua 1 lần',
         0: 'Mua không giới hạn'
     }
