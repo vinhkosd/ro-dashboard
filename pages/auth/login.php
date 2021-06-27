@@ -14,7 +14,7 @@ validateLogin(true, true);
           </div>
           <div class="col-md-8 pl-md-0">
             <div class="auth-form-wrapper px-4 py-5">
-              <a href="#" class="noble-ui-logo logo-light d-block mb-2">Noble<span>UI</span></a>
+              <a href="#" class="noble-ui-logo logo-light d-block mb-2">Ragnarok<span>AdminPanel</span></a>
               <h5 class="text-muted font-weight-normal mb-4">Welcome back! Log in to your account.</h5>
               <form id="loginForm" class="needs-validation" method="post">
                 <div class="form-group has-feedback">
@@ -29,18 +29,18 @@ validateLogin(true, true);
                   <span class="glyphicon form-control-feedback" aria-hidden="true"></span>
                   <div class="help-block with-errors"></div>
                 </div>
-                <div class="form-check form-check-flat form-check-primary">
+                <!--div class="form-check form-check-flat form-check-primary">
                   <label class="form-check-label">
                     <input type="checkbox" class="form-check-input">
                     Remember me
                   </label>
-                </div>
+                </div-->
                 <div class="mt-3">
                   <button type="submit" class="btn btn-primary mr-2 mb-2 mb-md-0 text-white">
                     Login
                   </button>
                 </div>
-                <a href="<?php homePath()?>pages/auth/register" class="d-block mt-3 text-muted">Not a user? Sign up</a>
+                <!--a href="<?php homePath()?>pages/auth/register" class="d-block mt-3 text-muted">Not a user? Sign up</a-->
               </form>
             </div>
           </div>

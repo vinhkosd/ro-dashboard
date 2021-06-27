@@ -152,6 +152,12 @@
               </ul>
             </div>
           </li>
+          <li class="nav-item">
+            <a href="<?php homePath();?>pages/giftcode/giftcodelist" class="nav-link">
+              <i class="link-icon" data-feather="hash"></i>
+              <span class="link-title">GiftCode</span>
+            </a>
+          </li>
           <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#forms" role="button" aria-expanded="false" aria-controls="forms">
               <i class="link-icon" data-feather="inbox"></i>
@@ -324,7 +330,7 @@
       </div>
     </nav>
 
-    <nav class="settings-sidebar">
+    <!--nav class="settings-sidebar">
       <div class="sidebar-body">
         <a href="#" class="settings-sidebar-toggler">
           <i data-feather="settings"></i>
@@ -340,4 +346,4 @@
           </a>
         </div>
       </div>
-    </nav>
+    </nav-->

@@ -13,7 +13,7 @@ use Carbon\Carbon;
               <span class="input-group-addon bg-transparent"><i data-feather="calendar" class=" text-primary"></i></span>
               <input type="text" class="form-control">
             </div>
-            <button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
+            <!--button type="button" class="btn btn-outline-info btn-icon-text mr-2 d-none d-md-block">
               <i class="btn-icon-prepend" data-feather="download"></i>
               Import
             </button>
@@ -24,7 +24,7 @@ use Carbon\Carbon;
             <button type="button" class="btn btn-primary btn-icon-text mb-2 mb-md-0">
               <i class="btn-icon-prepend" data-feather="download-cloud"></i>
               Download Report
-            </button>
+            </button-->
           </div>
         </div>
 
@@ -62,13 +62,13 @@ use Carbon\Carbon;
                         // DB::enableQueryLog(); // Enable query log
                         $paymentSumToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->sum('money');
 
-                        $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->groupBy('account')->count();
+                        $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('account')->count();
 
                         $paymentSumYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
 
-                        $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->groupBy('account')->count();
+                        $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('account')->count();
                         $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
-                        $paymentCountWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->groupBy('account')->count();
+                        $paymentCountWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->distinct('account')->count();
                         // var_dump(DB::getQueryLog());
                         // die();
                         $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
