@@ -10,4 +10,5 @@ foreach (glob(__DIR__."/../models/*.php") as $filename)
 {//include models
     include $filename;
 }
+date_default_timezone_set('Asia/Singapore');
 ?>
