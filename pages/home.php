@@ -145,8 +145,16 @@ use Carbon\Carbon;
                       </div>
                     </div>
                     <div class="row">
+                      <?php
+                      use Models\AccBase;
+                      $column = [
+                          'zoneid',
+                          'count'
+                      ];
+                      $getOnline = AccBase::where('zoneid', '<>', 0)->count();
+                      ?>
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2">1</h3>
+                        <h3 class="mb-2"><?php echo $getOnline;?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
                             <!-- <span>+2.8%</span> -->
