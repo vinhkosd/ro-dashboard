@@ -84,6 +84,47 @@
 				</div>
 			</div>
 			</div>
+			<!-- Extra large modal -->
+			
+			<div id="listRoleModal" class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" aria-labelledby="listRoleModal" aria-hidden="true">
+			  <div class="modal-dialog modal-xl">
+			    <div class="modal-content">
+			    	<div class="modal-header">
+						<h5 class="modal-title">Danh sách rolename</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<form id="addAuctionForm">
+			      			<div class="form-group">
+		                        <label for="server" class="col-form-label">Chọn server:</label>
+		                        <select class="form-control" name="server" required>
+		                            <option value=0 selected>Đang chỉnh sửa</option>
+		                            <option value=1>Đưa lên sàn</option>
+		                        </select>
+		                    </div>
+		                    
+	                    </form>
+	                    <table id="dataTableRole" class="table">
+								<thead>
+								<tr>
+									<th>ID</th>
+									<th>Tài khoản</th>
+									<th>Thời gian đăng ký</th>
+									<th>Email</th>
+									<th>Money</th>
+									<th>Email cũ</th>
+									<th>Chức năng</th>
+								</tr>
+								</thead>
+								<tbody>
+								</tbody>
+							</table>
+			      	</div>
+			    </div>
+			  </div>
+			</div>
 <script type="text/javascript">
 	$(document).ready(function() {
 		function loadAccountList() {
@@ -101,7 +142,10 @@
 					htmlBody += `	<td>${item.email}</td>\r\n`;
 					htmlBody += `	<td>${item.money}.00</td>\r\n`;
 					htmlBody += `	<td>${item.old_email}</td>\r\n`;
-					htmlBody += `	<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button></td>\r\n`;
+					htmlBody += `	<td>
+										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button>
+										<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#listRoleModal"  data-account='${JSON.stringify(item)}'>List role</button>
+									</td>\r\n`;
 					htmlBody += "</tr>\r\n";
 				});
 				$('#dataTableExample tbody').html(htmlBody);

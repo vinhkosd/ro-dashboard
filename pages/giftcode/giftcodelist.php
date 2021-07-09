@@ -1,7 +1,6 @@
 <?php
 use Models\DepositType; 
 use Carbon\Carbon; 
-$listDepType=DepositType::get(); 
 ?>
 <div class="page-content">
 	<nav class="page-breadcrumb">
@@ -25,7 +24,6 @@ $listDepType=DepositType::get();
 								<tr>
 									<th>ID</th>
 									<th>ItemID</th>
-									<th>Loại</th>
 									<th>Tên</th>
 									<th>Code</th>
 									<th>Loại mua</th>
@@ -57,12 +55,6 @@ $listDepType=DepositType::get();
 					<div class="form-group">
 						<label for="ItemID" class="col-form-label">ItemID:</label>
 						<input type="text" class="form-control" name="ItemID" />
-					</div>
-					<div class="form-group">
-						<label for="Type" class="col-form-label">Loại:</label>
-						<select class="form-control" name="Type">
-							<?php $listDepType->map(function ($item, $key) { echo "
-							<option value=".$item['Type'].">".$item['Title']."</option>"; }); ?></select>
 					</div>
 					<div class="form-group">
 						<label for="Code" class="col-form-label">Code:</label>
@@ -115,12 +107,6 @@ $listDepType=DepositType::get();
 						<label for="ItemID" class="col-form-label">ItemID:</label>
 						<input type="text" class="form-control" name="ItemID" required />
 					</div>
-					<div class="form-group">
-						<label for="Type" class="col-form-label">Loại:</label>
-						<select class="form-control" name="Type" required>
-							<?php $listDepType->map(function ($item, $key) { echo "
-							<option value=".$item['Type'].">".$item['Title']."</option>"; }); ?></select>
-					</div>
 					<!--<div class="form-group">-->
 					<!--	<label for="Code" class="col-form-label">Code:</label>-->
 					<!--	<input type="text" name="Code" class="form-control" />-->
@@ -132,8 +118,8 @@ $listDepType=DepositType::get();
 					<div class="form-group">
 						<label for="BuyType" class="col-form-label">Loại giftcode:</label>
 						<select class="form-control" name="BuyType" required>
-							<option value=1>Chung</option>
-							<option value=2>Rieng</option>
+							<option value=1>GiftCode Chung</option>
+							<option value=2>GiftCode Riêng</option>
 						</select>
 					</div>
 				</form>
@@ -147,12 +133,11 @@ $listDepType=DepositType::get();
 </div>
 <script type="text/javascript">
 	$(document).ready(function() {
-	    var listType = JSON.parse('<?php echo json_encode($listDepType->keyBy("Type"));?>');
 	function loadAccountList() {
 	
 	    var listBuyType = {
 	        1: 'Gift code chung',
-	        2: 'Gift code rieng',
+	        2: 'Gift code riêng',
 	        0: 'Không xác định'
 	    }
 	
@@ -166,7 +151,6 @@ $listDepType=DepositType::get();
 	    htmlBody += "<tr>\r\n";
 	    htmlBody += `	<td>${item.id}</td>\r\n`;
 	    htmlBody += `	<td>${item.ItemID}</td>\r\n`;
-	    htmlBody += `	<td>${listType[item.Type].Title}</td>\r\n`;
 	    htmlBody += `	<td>${item.Title}</td>\r\n`;
 	    htmlBody += `	<td>${item.Code}</td>\r\n`;
 	    htmlBody += `	<td>${listBuyType[item.BuyType]}</td>\r\n`;
