@@ -1,3 +1,8 @@
+<?php
+use Models\Zone;
+$zoneList = Zone::get();
+// var_dump($zoneList);
+?>
 			<div class="page-content">
 
 				<nav class="page-breadcrumb">
@@ -96,31 +101,35 @@
 						</button>
 					</div>
 					<div class="modal-body">
-						<form id="addAuctionForm">
+						<form id="roleListForm">
+							<input type="hidden" name="id"/>
 			      			<div class="form-group">
 		                        <label for="server" class="col-form-label">Chọn server:</label>
-		                        <select class="form-control" name="server" required>
-		                            <option value=0 selected>Đang chỉnh sửa</option>
-		                            <option value=1>Đưa lên sàn</option>
+		                        <select class="form-control" name="server" value="<?php echo $zoneList->first()['zoneid'];?>" required>
+		                        	<?php
+		                        		$zoneList->map(function ($item, $key) {
+                        					echo "<option value=".$item['zoneid'].">".$item['zonename']." - RegionId: ".$item['regionid']."- Zone: ".$item['zoneid']."</option>";
+	                        			}); 
+		                        	?>
 		                        </select>
 		                    </div>
 		                    
 	                    </form>
 	                    <table id="dataTableRole" class="table">
-								<thead>
-								<tr>
-									<th>ID</th>
-									<th>Tài khoản</th>
-									<th>Thời gian đăng ký</th>
-									<th>Email</th>
-									<th>Money</th>
-									<th>Email cũ</th>
-									<th>Chức năng</th>
-								</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
+							<thead>
+							<tr>
+								<th>AccID</th>
+								<th>CharID</th>
+								<th>ZoneId</th>
+								<th>Name</th>
+								<th>RoleLv</th>
+								<th>Ngày tạo</th>
+								<th>Chức năng</th>
+							</tr>
+							</thead>
+							<tbody>
+							</tbody>
+						</table>
 			      	</div>
 			    </div>
 			  </div>
@@ -129,7 +138,6 @@
 	$(document).ready(function() {
 		function loadAccountList() {
 			var currentPage = $('#dataTableExample').DataTable().page.info().page;
-			console.log(currentPage);
 			$('#dataTableExample').DataTable().destroy();
 			$('#dataTableExample tbody').html("Loading...");
 			$.post("<?php homePath()?>ajax/accountlist.php", (data) => {
@@ -138,7 +146,7 @@
 					htmlBody += "<tr>\r\n";
 					htmlBody += `	<td>${item.id}</td>\r\n`;
 					htmlBody += `	<td>${item.account}</td>\r\n`;
-					htmlBody += `	<td>${item.regtime}</td>\r\n`;
+					htmlBody += `	<td>${moment(item.regtime).format('DD/MM/YYYY HH:mm:ss')}</td>\r\n`;
 					htmlBody += `	<td>${item.email}</td>\r\n`;
 					htmlBody += `	<td>${item.money}.00</td>\r\n`;
 					htmlBody += `	<td>${item.old_email}</td>\r\n`;
@@ -182,8 +190,6 @@
 			var button = $(event.relatedTarget) // Button that triggered the modal
 			console.log(button.data('account'));
 			var accountData = (button.data('account')) // Extract info from data-* attributes
-			// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-			// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 			var modal = $(this);
 			Object.keys(accountData).map(item => {
 				if(item !== 'password') {
@@ -191,6 +197,34 @@
 				}
 			})
 			modal.find('.modal-title').text('Edit account : ' + accountData['account'])
+		});
+		
+		$('#listRoleModal').on('show.bs.modal', function (event) {
+			var button = $(event.relatedTarget) // Button that triggered the modal
+			var accountData = (button.data('account')) // Extract info from data-* attributes
+			var modal = $(this);
+			
+			var params = {
+				...accountData,
+				zoneid: <?php echo $zoneList->first()['zoneid'];?>
+			}
+			
+			$('#roleListForm select[name=server]').val(<?php echo $zoneList->first()['zoneid'];?>);
+			
+			Object.keys(accountData).map(item => {
+				modal.find('.modal-body input[name='+item+']').val(accountData[item]);
+			})
+			getRoles(params);
+		});
+		$('#roleListForm select[name=server]').change(function() {
+			var zoneId = $(this).val();
+			var accId = $('#roleListForm input[name=id]').val();
+			var params = {
+				id: accId,
+				zoneid: zoneId
+			}
+			
+			getRoles(params);
 		});
 
 		$('#editAccountSaveButton').click(function () {
@@ -211,6 +245,52 @@
 			});
 			return false;
 		});
+		
+		function getRoles(params) {
+			var currentPage = $('#dataTableRole').DataTable().page.info().page;
+			$('#dataTableRole').DataTable().destroy();
+			$('#dataTableRole tbody').html("Loading...");
+			
+			$.get("<?php homePath()?>ajax/getroles.php", params, (data) => {
+				var htmlBody = "";
+				data.map(item => {
+					htmlBody += "<tr>\r\n";
+					htmlBody += `	<td>${item.accid}</td>\r\n`;
+					htmlBody += `	<td>${item.charid}</td>\r\n`;
+					htmlBody += `	<td>${item.zoneid}</td>\r\n`;
+					htmlBody += `	<td>${item.name}</td>\r\n`;
+					htmlBody += `	<td>${item.rolelv}</td>\r\n`;
+					htmlBody += `	<td>${moment(1000*item.createtime).format('DD/MM/YYYY HH:mm:ss')}</td>\r\n`;
+					htmlBody += `	<td>
+										<!--button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button-->
+									</td>\r\n`;
+					htmlBody += "</tr>\r\n";
+				});
+				$('#dataTableRole tbody').html(htmlBody);
+				
+				$('#dataTableRole').DataTable({
+					"aLengthMenu": [
+						[10, 30, 50, -1],
+						[10, 30, 50, "Tất cả"]
+					],
+					"iDisplayLength": 10,
+					"language": {
+						search: ""
+					}
+				});
+				$('#dataTableRole').each(function() {
+					var datatable = $(this);
+					// SEARCH - Add the placeholder for Search and Turn this into in-line form control
+					var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+					search_input.attr('placeholder', 'Search');
+					search_input.removeClass('form-control-sm');
+					// LENGTH - Inline-Form control
+					var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+					length_sel.removeClass('form-control-sm');
+				});
+				$('#dataTableRole').DataTable().page(currentPage).draw('page');
+			}, "json");
+		}
 	});
 
 </script>

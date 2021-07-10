@@ -7,13 +7,18 @@ validateLogin(true, false);//check account login
 header('Content-Type: application/json');
 
 $charBase = CharBase::query();
-$accId = is_numeric($_GET['accid']) ? $_GET['accid'] : 0;
-$charBase->where('accid', $accId);
+$accId = is_numeric($_GET['id']) ? $_GET['id'] : 0;
+$zoneId = is_numeric($_GET['zoneid']) ? $_GET['zoneid'] : 0;
+
+$charBase->where('accid', $accId)->where('zoneid', $zoneId);
 
 $column = [
     'zoneid',
     'accid',
-    'maincharid'
+    'charid',
+    'name',
+    'rolelv',
+    'createtime'
 ];
 
 echo(json_encode($charBase->get($column)));

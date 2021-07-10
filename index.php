@@ -71,6 +71,7 @@ require __DIR__.'/app/index.php';
 
 	<!-- core:js -->
 	<script src="<?php homePath();?>assets/vendors/core/core.js"></script>
+	<script src="<?php homePath();?>assets/js/moment.min.js"></script>
 	<!-- endinject -->
   <!-- plugin js for this page -->
   <script src="<?php homePath();?>assets/vendors/chartjs/Chart.min.js"></script>

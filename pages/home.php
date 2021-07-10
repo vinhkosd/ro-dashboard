@@ -31,7 +31,7 @@ use Carbon\Carbon;
         <div class="row">
           <div class="col-12 col-xl-12 stretch-card">
             <div class="row flex-grow">
-              <div class="col-md-3 grid-margin stretch-card">
+              <div class="col-md-2 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
@@ -56,6 +56,9 @@ use Carbon\Carbon;
                         $yesterday = Carbon::yesterday();
                         $weekStartDate = Carbon::now()->startOfWeek();
                         $weekEndDate = Carbon::now()->endOfWeek();
+                        
+                        $monthStartDate = Carbon::now()->startOfWeek();
+                        $monthEndDate = Carbon::now()->endOfWeek();
 
                         $prevWeekStartDate = Carbon::now()->subWeek()->startOfWeek();
                         $prevWeekEndDate = Carbon::now()->subWeek()->endOfWeek();
@@ -69,12 +72,10 @@ use Carbon\Carbon;
                         $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('account')->count();
                         $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
                         $paymentCountWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->distinct('account')->count();
-                        // var_dump(DB::getQueryLog());
-                        // die();
                         $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
-                        // $growPayment = round(($paymentCountYesterday ? (($paymentCountToday - $paymentCountYesterday) / $paymentCountYesterday) : 1) * 100, 1);
-
-                        // $growWeekPayment = round(($paymentSumPrevWeek ? (($paymentSumWeek - $paymentSumPrevWeek) / $paymentSumPrevWeek) : 1) * 100, 1);
+                        
+                        $paymentSumMonth = PaymentLogs::whereBetween('time', [$monthStartDate, $monthEndDate])->sum('money');
+                        $paymentCountMonth = PaymentLogs::whereBetween('time', [$monthStartDate, $monthEndDate])->distinct('account')->count();
                       ?>
                         <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
@@ -91,7 +92,7 @@ use Carbon\Carbon;
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 grid-margin stretch-card">
+              <div class="col-md-2 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
@@ -126,7 +127,7 @@ use Carbon\Carbon;
                   </div>
                 </div>
               </div>
-              <div class="col-md-3 grid-margin stretch-card">
+              <div class="col-md-2 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
@@ -173,7 +174,7 @@ use Carbon\Carbon;
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
-                      <h6 class="card-title mb-0">Tổng nạp tuần</h6>
+                      <h6 class="card-title mb-0">Tổng nạp tháng</h6>
                       <div class="dropdown mb-2">
                         <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
@@ -197,9 +198,44 @@ use Carbon\Carbon;
                           </p>
                         </div>
                       </div>
-                      <div class="col-6 col-md-12 col-xl-7">
-                        <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>
+                      <!--<div class="col-6 col-md-12 col-xl-7">-->
+                      <!--  <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>-->
+                      <!--</div>-->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 grid-margin stretch-card">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-baseline">
+                      <h6 class="card-title mb-0">Tổng nạp tháng</h6>
+                      <div class="dropdown mb-2">
+                        <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton2">
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="eye" class="icon-sm mr-2"></i> <span class="">View</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="edit-2" class="icon-sm mr-2"></i> <span class="">Edit</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="trash" class="icon-sm mr-2"></i> <span class="">Delete</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="printer" class="icon-sm mr-2"></i> <span class="">Print</span></a>
+                          <a class="dropdown-item d-flex align-items-center" href="#"><i data-feather="download" class="icon-sm mr-2"></i> <span class="">Download</span></a>
+                        </div>
                       </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-6 col-md-12 col-xl-5">
+                        <h3 class="mb-2"><?php echo number_format($paymentSumMonth).'.00$';?></h3>
+                        <div class="d-flex align-items-baseline">
+                          <p class="text-success">
+                            <span><?php echo $paymentCountMonth;?> người nạp</span>
+                            <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
+                          </p>
+                        </div>
+                      </div>
+                      <!--<div class="col-6 col-md-12 col-xl-7">-->
+                      <!--  <div id="apexChart3" class="mt-md-3 mt-xl-0"></div>-->
+                      <!--</div>-->
                     </div>
                   </div>
                 </div>
