@@ -174,7 +174,7 @@ use Carbon\Carbon;
                 <div class="card">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-baseline">
-                      <h6 class="card-title mb-0">Tổng nạp tháng</h6>
+                      <h6 class="card-title mb-0">Tổng nạp tuần</h6>
                       <div class="dropdown mb-2">
                         <button class="btn p-0" type="button" id="dropdownMenuButton2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="icon-lg text-muted pb-3px" data-feather="more-horizontal"></i>
