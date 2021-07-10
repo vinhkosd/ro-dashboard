@@ -1,7 +1,6 @@
 <?php
 use Models\Zone;
 $zoneList = Zone::get();
-// var_dump($zoneList);
 ?>
 			<div class="page-content">
 
@@ -22,12 +21,12 @@ $zoneList = Zone::get();
 							<table id="dataTableExample" class="table">
 								<thead>
 								<tr>
-									<th>ID</th>
-									<th>Tài khoản</th>
-									<th>Thời gian đăng ký</th>
-									<th>Email</th>
-									<th>Money</th>
-									<th>Email cũ</th>
+									<th>ZoneID</th>
+									<th>AccID</th>
+									<th>CharID</th>
+									<th>Tên Nhân Vật</th>
+									<th>RoleLv</th>
+									<th>Ngày tạo</th>
 									<th>Chức năng</th>
 								</tr>
 								</thead>
@@ -152,14 +151,14 @@ $zoneList = Zone::get();
 				},
 				"processing": true,
 		        "serverSide": true,
-		        "ajax": "<?php homePath()?>ajax/accountlist_serverside.php",
+		        "ajax": "<?php homePath()?>ajax/charlist_serverside.php",
 		        "columns": [
-		            { "data": "id" },
-		            { "data": "account" },
-		            { "data": "regtime" },
-		            { "data": "email" },
-		            { "data": "money" },
-		            { "data": "old_email" },
+		            { "data": "zoneid" },
+		            { "data": "accid" },
+		            { "data": "charid" },
+		            { "data": "name" },
+		            { "data": "rolelv" },
+		            { "data": "createtime" },
 		            {
 		                "class":          "function-button",
 		                "orderable":      false,
@@ -181,48 +180,6 @@ $zoneList = Zone::get();
 			        console.log($(this));
 			    });
 		    });
-		    
-	    
-			// $.post("<?php homePath()?>ajax/accountlist.php", (data) => {
-			// 	var htmlBody = "";
-			// 	data.map(item => {
-			// 		htmlBody += "<tr>\r\n";
-			// 		htmlBody += `	<td>${item.id}</td>\r\n`;
-			// 		htmlBody += `	<td>${item.account}</td>\r\n`;
-			// 		htmlBody += `	<td>${moment(item.regtime).format('DD/MM/YYYY HH:mm:ss')}</td>\r\n`;
-			// 		htmlBody += `	<td>${item.email}</td>\r\n`;
-			// 		htmlBody += `	<td>${item.money}.00</td>\r\n`;
-			// 		htmlBody += `	<td>${item.old_email}</td>\r\n`;
-			// 		htmlBody += `	<td>
-			// 							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button>
-			// 							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#listRoleModal"  data-account='${JSON.stringify(item)}'>List role</button>
-			// 						</td>\r\n`;
-			// 		htmlBody += "</tr>\r\n";
-			// 	});
-			// 	$('#dataTableExample tbody').html(htmlBody);
-
-			// 	$('#dataTableExample').DataTable({
-			// 		"aLengthMenu": [
-			// 			[10, 30, 50, -1],
-			// 			[10, 30, 50, "Tất cả"]
-			// 		],
-			// 		"iDisplayLength": 10,
-			// 		"language": {
-			// 			search: ""
-			// 		},
-			// 	});
-			// 	$('#dataTableExample').each(function() {
-			// 		var datatable = $(this);
-			// 		// SEARCH - Add the placeholder for Search and Turn this into in-line form control
-			// 		var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
-			// 		search_input.attr('placeholder', 'Search');
-			// 		search_input.removeClass('form-control-sm');
-			// 		// LENGTH - Inline-Form control
-			// 		var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
-			// 		length_sel.removeClass('form-control-sm');
-			// 	});
-			// 	$('#dataTableExample').DataTable().page(currentPage).draw('page');
-			// }, "json");
 		}
 		loadAccountList();
 		

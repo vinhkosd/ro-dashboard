@@ -42,6 +42,12 @@
               </ul>
             </div>
           </li>
+          <li class="nav-item">
+            <a href="<?php homePath();?>pages/char/charlist" class="nav-link">
+              <i class="link-icon" data-feather="message-square"></i>
+              <span class="link-title">Danh sách Nhân vật</span>
+            </a>
+          </li>
           <!-- <li class="nav-item">
             <a href="<?php homePath();?>pages/apps/chat.html" class="nav-link">
               <i class="link-icon" data-feather="message-square"></i>

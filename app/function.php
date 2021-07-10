@@ -63,8 +63,48 @@ function redirectRoute($url) {
 }
 
 function renderNavbar() {
-  if(isset($_SESSION['email'])) {
-    include(__DIR__."/../pages/navbar.php");
-  } 
+    if(isset($_SESSION['email'])) {
+        include(__DIR__."/../pages/navbar.php");
+    } 
+}
+
+function getPartial($queryData = [], $limit = 100, $page = 1, $columns = [])
+{
+    $data = [];
+    $offset = ($page - 1) * $limit;
+    $totalRecord = $queryData->count();
+
+    if ($totalRecord) {
+        $totalPage = ($totalRecord % $limit == 0) ? $totalRecord / $limit : ceil($totalRecord / $limit);
+        if($limit != -1) {
+        $data = $queryData->offset($offset)
+            ->limit($limit);
+        } else {
+            $data = $queryData;
+        }
+        if ($columns) $data = $data->get($columns);
+        else $data = $data->get();
+    } else {
+        $totalPage = 0;
+        $page = 0;
+        $totalRecord = 0;
+    }
+    $dataPartial = array();
+    foreach($data as $key => $value) {
+        $item = $value;
+        $item['DT_RowData'] = json_decode(json_encode($value), true);
+        $item['DT_RowId'] = "row_".$key;
+        array_push($dataPartial, $item);
+    }
+
+    $result = [
+        'data'          => $dataPartial,
+        'page'          => $page,
+        'totalPage'     => $totalPage,
+        'totalRecord'   => $totalRecord,
+        'totalFiltered' => count($data)
+    ];
+
+    return $result;
 }
 ?>
