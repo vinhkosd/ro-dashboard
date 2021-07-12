@@ -23,3 +23,9 @@ v.v.v.
 - Tổng tiền nạp current date: tổng nạp của ngày hiện tại
 - Tổng tiền nạp daily: tổng nạp của ngày chỉ định từ ngày đến ngày
 - Tổng tiền nạp monthly: tổng nạp của tháng chỉ định từ tháng đến tháng
+
+Table log_login
+
+id : bigint
+accid: bigint
+logindate: date -> 1 ngày 1 record, lấy lần đăng nhập gần nhất trong ngày

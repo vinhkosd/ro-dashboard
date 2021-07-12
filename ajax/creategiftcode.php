@@ -6,11 +6,15 @@ use Illuminate\Support\Str;
 validateLogin(true, false);//check account login
 
 if(isset($_POST)){
-    $input = collect($_POST)->only(['id', 'ItemID', 'Title', 'count', 'prefix', 'codelen', 'BuyType'])->toArray();
+    $input = collect($_POST)->only(['id', 'GiftID', 'ItemID', 'Title', 'count', 'prefix', 'codelen', 'BuyType'])->toArray();
     $dataCode = "";
+    if(empty($input['GiftID'])) {
+        $input['GiftID'] = GiftCode::max('GiftID') + 1;
+    }
+    
     for ($i = 1; $i <= intval($input['count']); $i++) {
         $codeRandom = empty($input['prefix']) ? Str::random(intval($input['codelen'])) : $input['prefix'].Str::random(intval($input['codelen']));
-        $giftCodeArray = collect($input)->only(['id', 'ItemID', 'Title', 'BuyType'])->toArray();
+        $giftCodeArray = collect($input)->only(['id', 'GiftID', 'ItemID', 'Title', 'BuyType'])->toArray();
         $giftCodeArray['Code'] = $codeRandom;
         GiftCode::insert($giftCodeArray);
         $dataCode .= $codeRandom."\n";

@@ -172,7 +172,7 @@ $(document).ready(function() {
         }
     }
     var timeoutSearch = null;
-    $('#filterText input').keyup(function(e) {
+    $('#filterText input').change(function(e) {
         if(timeoutSearch) {
             clearTimeout(timeoutSearch);
         }
@@ -250,7 +250,8 @@ $(document).ready(function() {
                 // "language": {
                 //     search: ""
                 // },
-                "searching": false
+                "searching": false,
+                "order": [[ 0, "desc" ]],
             });
             $('#dataTableExample').each(function() {
                 var datatable = $(this);

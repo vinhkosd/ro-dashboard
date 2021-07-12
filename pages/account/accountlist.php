@@ -154,6 +154,7 @@ validateLogin(true, false);//check account login
 				"processing": true,
 		        "serverSide": true,
 		        "ajax": "<?php homePath()?>ajax/accountlist_serverside.php",
+		        "order": [[ 0, "desc" ]],
 		        "columns": [
 		            { "data": "id" },
 		            { "data": "account" },

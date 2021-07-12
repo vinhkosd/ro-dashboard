@@ -1,7 +1,12 @@
 <?php
-use Models\DepositType; 
+use Models\GiftCode; 
 use Carbon\Carbon; 
 validateLogin(true, false);//check account login
+
+
+$giftCodeQuery = GiftCode::query();
+$giftCodeQuery->groupBy('GiftID', 'Title');
+$giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
 ?>
 <div class="page-content">
 	<nav class="page-breadcrumb">
@@ -14,6 +19,25 @@ validateLogin(true, false);//check account login
 	<div class="row">
 		<div class="col-md-12 grid-margin stretch-card">
 			<div class="card">
+				<div class="card-body col-md-12" style="display:flex">
+		            <div class="col-md-6">
+		                <h6 class="card-title">Chọn loại giftCode</h6>
+		                <div class="input-group">
+		                   <select id="giftCat" name="giftCat" value="0">
+		                   		<option value=0>Tất cả</option>
+		                   		<?php 
+		                   			$giftCodeCategorys->map(function($item) {
+		                   				echo '<option value='.$item['GiftID'].'>'.$item['GiftID'].' - '.$item['Title'].'</option>';	
+		                   			});
+		                   		?>
+		                   	</select>
+		                </div>
+		            </div>
+		            <div class="col-md-3">
+		            	<h6 class="card-title">Xuất file</h6>
+		                <button id="exportToFile" type="button" class="btn btn-primary">Xuất file</button>
+		            </div>
+		        </div>
 				<div class="card-body">
 					<h6 class="card-title">Danh sách gói</h6>
 					<p class="card-description"><a id="reloadDataButton" href="javascript:void(0)"> Tải lại </a>
@@ -24,6 +48,7 @@ validateLogin(true, false);//check account login
 							<thead>
 								<tr>
 									<th>ID</th>
+									<th>GiftID</th>
 									<th>ItemID</th>
 									<th>Tên</th>
 									<th>Code</th>
@@ -82,16 +107,20 @@ validateLogin(true, false);//check account login
 	</div>
 </div>
 
-<div class="modal fade" id="createGiftCode" tabindex="-1" role="dialog" aria-labelledby="editAccountLabel" aria-hidden="true">
+<div class="modal fade" id="createGiftCode" tabindex="-1" role="dialog" aria-labelledby="createGiftCodeLabel" aria-hidden="true">
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="createGiftCodeLabel">Tao GiftCode</h5>
+				<h5 class="modal-title" id="createGiftCodeLabel">Tạo GiftCode</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span>
 				</button>
 			</div>
 			<div class="modal-body">
 				<form id="createGiftCodeForm">
+					<div class="form-group">
+						<label for="GiftID" class="col-form-label">GiftID:</label>
+						<input type="text" class="form-control" name="GiftID" placeholder="GiftID của code hoặc để trống GiftID tự tăng" data-inputmask="'alias': 'decimal', 'groupSeparator': ',', 'autoUnmask' : true" >
+					</div>
 					<div class="form-group">
 						<label for="count" class="col-form-label">Số lượng code:</label>
 						<input type="text" class="form-control" name="count" data-inputmask="'alias': 'decimal', 'groupSeparator': ',', 'autoUnmask' : true" required>
@@ -142,85 +171,94 @@ validateLogin(true, false);//check account login
 	        0: 'Không xác định'
 	    }
 	
-	var currentPage = $('#dataTableExample').DataTable().page.info().page;
-	console.log(currentPage);
-	$('#dataTableExample').DataTable().destroy();
-	$('#dataTableExample tbody').html("Loading...");
-	$.post("<?php homePath()?>ajax/giftcodelist.php", (data) => {
-	var htmlBody = "";
-	data.map(item => {
-	    htmlBody += "<tr>\r\n";
-	    htmlBody += `	<td>${item.id}</td>\r\n`;
-	    htmlBody += `	<td>${item.ItemID}</td>\r\n`;
-	    htmlBody += `	<td>${item.Title}</td>\r\n`;
-	    htmlBody += `	<td>${item.Code}</td>\r\n`;
-	    htmlBody += `	<td>${listBuyType[item.BuyType]}</td>\r\n`;
-	    htmlBody += `	<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button></td>\r\n`;
-	    htmlBody += "</tr>\r\n";
-	});
-	$('#dataTableExample tbody').html(htmlBody);
-	
-	$('#dataTableExample').DataTable({
-	    "aLengthMenu": [
-	        [10, 30, 50, -1],
-	        [10, 30, 50, "Tất cả"]
-	    ],
-	    "iDisplayLength": 10,
-	    "language": {
-	        search: ""
-	    }
-	});
-	$('#dataTableExample').each(function() {
-	    var datatable = $(this);
-	    // SEARCH - Add the placeholder for Search and Turn this into in-line form control
-	    var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
-	    search_input.attr('placeholder', 'Search');
-	    search_input.removeClass('form-control-sm');
-	    // LENGTH - Inline-Form control
-	    var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
-	    length_sel.removeClass('form-control-sm');
-	});
-	$('#dataTableExample').DataTable().page(currentPage).draw('page');
-	}, "json");
+		var currentPage = $('#dataTableExample').DataTable().page.info().page;
+		$('#dataTableExample').DataTable().destroy();
+		$('#dataTableExample tbody').html("Loading...");
+		
+		var giftCat = $('#giftCat').val();
+		var params = {
+			GiftID: giftCat
+		};
+		
+		$.post("<?php homePath()?>ajax/giftcodelist.php", params, (data) => {
+			var htmlBody = "";
+			data.map(item => {
+			    htmlBody += "<tr>\r\n";
+			    htmlBody += `	<td>${item.id}</td>\r\n`;
+			    htmlBody += `	<td>${item.GiftID}</td>\r\n`;
+			    htmlBody += `	<td>${item.ItemID}</td>\r\n`;
+			    htmlBody += `	<td>${item.Title}</td>\r\n`;
+			    htmlBody += `	<td>${item.Code}</td>\r\n`;
+			    htmlBody += `	<td>${listBuyType[item.BuyType]}</td>\r\n`;
+			    htmlBody += `	<td><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account='${JSON.stringify(item)}'>Edit</button></td>\r\n`;
+			    htmlBody += "</tr>\r\n";
+			});
+			
+			$('#dataTableExample tbody').html(htmlBody);
+			
+			$('#dataTableExample').DataTable({
+			    "aLengthMenu": [
+			        [10, 30, 50, -1],
+			        [10, 30, 50, "Tất cả"]
+			    ],
+			    "iDisplayLength": 10,
+			    "language": {
+			        search: ""
+			    }
+			});
+			$('#dataTableExample').each(function() {
+			    var datatable = $(this);
+			    // SEARCH - Add the placeholder for Search and Turn this into in-line form control
+			    var search_input = datatable.closest('.dataTables_wrapper').find('div[id$=_filter] input');
+			    search_input.attr('placeholder', 'Search');
+			    search_input.removeClass('form-control-sm');
+			    // LENGTH - Inline-Form control
+			    var length_sel = datatable.closest('.dataTables_wrapper').find('div[id$=_length] select');
+			    length_sel.removeClass('form-control-sm');
+			});
+			$('#dataTableExample').DataTable().page(currentPage).draw('page');
+		}, "json");
 	}
+	
 	loadAccountList();
+	
 	$('#reloadDataButton').click(function(e,t) {
-	loadAccountList(); 
+		loadAccountList(); 
 	})
 	
 	$('#editAccount').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget) // Button that triggered the modal
 	console.log(button.data('account'));
 	var accountData = (button.data('account')) // Extract info from data-* attributes
-	// If necessary, you could initiate an AJAX request here (and then do the updating in a callback).
-	// Update the modal's content. We'll use jQuery here, but you could use a data binding library or other methods instead.
 	var modal = $(this);
+	//set data to form
 	Object.keys(accountData).map(item => {
-	if(item !== 'password') {
-	    modal.find('.modal-body input[name='+item+']').val(accountData[item]);
-	    modal.find('.modal-body select[name='+item+']').val(accountData[item]);
-	}
-	})
+		if(item !== 'password') {
+		    modal.find('.modal-body input[name='+item+']').val(accountData[item]);
+		    modal.find('.modal-body select[name='+item+']').val(accountData[item]);
+		}
+	});
+	
 	modal.find('.modal-title').text('Edit account : ' + accountData['account'])
 	});
 	
 	$('#editAccountSaveButton').click(function () {
-	$.post("<?php homePath()?>ajax/editpackage.php",$('#editAccountForm').serialize(), (data) => {
-	if(data.success) {
-	    Lobibox.notify("success", {
-	        msg: data.success
-	    });
-	} else {
-	    Lobibox.notify("error", {
-	        msg: data.error
-	    });
-	}
-	$('#editAccount').modal('hide');
-	}, "json")
-	.always(function() {
-	loadAccountList();
-	});
-	return false;
+		$.post("<?php homePath()?>ajax/editpackage.php",$('#editAccountForm').serialize(), (data) => {
+			if(data.success) {
+			    Lobibox.notify("success", {
+			        msg: data.success
+			    });
+			} else {
+			    Lobibox.notify("error", {
+			        msg: data.error
+			    });
+			}
+			$('#editAccount').modal('hide');
+		}, "json")
+		.always(function() {
+		loadAccountList();
+		});
+		return false;
 	});
 	
 	$('#createGiftCodeBtn').click(function () {
@@ -228,29 +266,65 @@ validateLogin(true, false);//check account login
 	});
 	
 	 $('#createGiftCodeForm').validator().on('submit', function (e) {
-            if (e.isDefaultPrevented()) {
-                // handle the invalid form...
-                return false;
-            }
-
-            $.post("<?php homePath()?>ajax/creategiftcode.php", $('#createGiftCodeForm').serialize(), (data) => {
-                if (data.success) {
-                    Lobibox.notify("success", {
-                        msg: data.success
-                    });
-                    download(data.filename, data.dataCode);
-                } else {
-                    Lobibox.notify("error", {
-                        msg: data.error
-                    });
-                }
-                $('#createGiftCode').modal('hide');
-            }, "json")
-            .always(function() {
-                loadAccountList();
-            });
+        if (e.isDefaultPrevented()) {
             return false;
+        }
+
+        $.post("<?php homePath()?>ajax/creategiftcode.php", $('#createGiftCodeForm').serialize(), (data) => {
+            if (data.success) {
+                Lobibox.notify("success", {
+                    msg: data.success
+                });
+                download(data.filename, data.dataCode);
+                loadCategoryGiftCode();
+            } else {
+                Lobibox.notify("error", {
+                    msg: data.error
+                });
+            }
+            $('#createGiftCode').modal('hide');
+        }, "json")
+        .always(function() {
+            loadAccountList();
         });
+        return false;
+    });
+    
+    function loadCategoryGiftCode() {
+    	$.post("<?php homePath()?>ajax/listcategorygiftcode.php", (data) => {
+    		var htmlBody = "<option value=0>Tất cả</option>";
+    		data.map(item => {
+				htmlBody += '<option value=' + item.GiftID + '>'+ item.GiftID + ' - ' + item.Title + '</option>';
+			});
+			$('#giftCat').html(htmlBody);
+        }, "json");
+    }
+    
+    $('#giftCat').change(function(e,t) {
+		loadAccountList(); 
+	})
+	
+	$('#exportToFile').click(function () {
+		var giftCat = $('#giftCat').val();
+		var params = {
+			GiftID: giftCat
+		};
+		
+		filenameExport = 'CODETYPE' + $('#giftCat').val() + '-' + moment().format('DD-MM-YYYY-HHmmss');
+		$.post("<?php homePath()?>ajax/giftcodelist.php", params, (data) => {
+		var fileBody = "";
+		data.map(item => {
+		    fileBody += `${item.Code}\r\n`;
+		});
+		download(filenameExport, fileBody);
+		
+		Lobibox.notify("success", {
+    		msg: 'Xuất file thành công'
+        });
+        
+		}, "json");
+	});
+    
     function download(filename, text) {
       var element = document.createElement('a');
       element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));

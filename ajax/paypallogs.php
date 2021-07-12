@@ -21,5 +21,6 @@ if($filterText) {
     });
     
 }
+
 echo(json_encode($paymentLogs->get()));
 ?>
