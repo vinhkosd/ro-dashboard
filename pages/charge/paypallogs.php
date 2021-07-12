@@ -1,3 +1,6 @@
+<?php
+validateLogin(true, false);//check account login
+?>
 <div class="page-content">
 
     <nav class="page-breadcrumb">

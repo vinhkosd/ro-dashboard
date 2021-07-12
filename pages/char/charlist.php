@@ -1,6 +1,7 @@
 <?php
 use Models\Zone;
 $zoneList = Zone::get();
+validateLogin(true, false);//check account login
 ?>
 			<div class="page-content">
 
@@ -14,27 +15,42 @@ $zoneList = Zone::get();
 				<div class="row">
 					<div class="col-md-12 grid-margin stretch-card">
 						<div class="card">
-						<div class="card-body">
-							<h6 class="card-title">Danh sách tài khoản</h6>
-							<p class="card-description"><a id="reloadDataButton" href="javascript:void(0)"> Tải lại </a></p>
-							<div class="table-responsive">
-							<table id="dataTableExample" class="table">
-								<thead>
-								<tr>
-									<th>ZoneID</th>
-									<th>AccID</th>
-									<th>CharID</th>
-									<th>Tên Nhân Vật</th>
-									<th>RoleLv</th>
-									<th>Ngày tạo</th>
-									<th>Chức năng</th>
-								</tr>
-								</thead>
-								<tbody>
-								</tbody>
-							</table>
+							<div class="card-body col-md-12" style="display:flex">
+					            <div class="col-md-6">
+					                <h6 class="card-title">Chọn server</h6>
+					                <div class="input-group date datepicker" id="fromDate">
+					                   <select id="zoneList" name="zoneList" value="<?php echo $zoneList->first()['zoneid']; ?>">
+					                   		<option value=0>Tất cả</option>
+					                   		<?php 
+					                   			$zoneList->map(function($item) {
+					                   				echo '<option value='.$item['zoneid'].'>'.$item['regionid'].' - zoneId: '.$item['zoneid'].'- '.$item['zonename'].'</option>';	
+					                   			});
+					                   		?>
+					                   	</select>
+					                </div>
+					            </div>
+					        </div>
+							<div class="card-body">
+								<h6 class="card-title">Danh sách tài khoản</h6>
+								<p class="card-description"><a id="reloadDataButton" href="javascript:void(0)"> Tải lại </a></p>
+								<div class="table-responsive">
+								<table id="dataTableExample" class="table">
+									<thead>
+										<tr>
+											<th>ZoneID</th>
+											<th>AccID</th>
+											<th>CharID</th>
+											<th>Tên Nhân Vật</th>
+											<th>RoleLv</th>
+											<th>Ngày tạo</th>
+											<th>Chức năng</th>
+										</tr>
+									</thead>
+									<tbody>
+									</tbody>
+								</table>
+								</div>
 							</div>
-						</div>
 						</div>
 					</div>
 				</div>
@@ -151,21 +167,27 @@ $zoneList = Zone::get();
 				},
 				"processing": true,
 		        "serverSide": true,
-		        "ajax": "<?php homePath()?>ajax/charlist_serverside.php",
+		        "ajax": {
+		            "url": "<?php homePath()?>ajax/charlist_serverside.php",
+		            "data": function ( d ) {
+		                d.zoneid = $('#zoneList').val();
+		            }
+		        },
 		        "columns": [
-		            { "data": "zoneid" },
+		            { "data": "zoneid", "searchable" : false },
 		            { "data": "accid" },
 		            { "data": "charid" },
 		            { "data": "name" },
-		            { "data": "rolelv" },
-		            { "data": "createtime" },
+		            { "data": "rolelv", "searchable" : false },
+		            { "data": "createtime", "searchable" : false },
 		            {
 		                "class":          "function-button",
 		                "orderable":      false,
 		                "data":           null,
-		                "defaultContent": `	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account="">Edit</button>
-		                					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#listRoleModal"  data-account="">List role</button>
-		                `
+		                "defaultContent": ''
+		                // `	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#editAccount" data-account="">Edit</button>
+		                // 					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#listRoleModal"  data-account="">List role</button>
+		                // `
 		            },
 		        ]
 			});
@@ -176,8 +198,6 @@ $zoneList = Zone::get();
 			        var tr = $(this).closest('tr');
 			        var row = $('#dataTableExample').DataTable().row( tr );
 			        $(this).find('button').attr('data-account', JSON.stringify(row.data()));
-			        console.log(row.data());
-			        console.log($(this));
 			    });
 		    });
 		}
@@ -186,9 +206,12 @@ $zoneList = Zone::get();
 		$('#reloadDataButton').click(function(e,t) {
 			loadAccountList(); 
 		})
+		
+		$('#zoneList').change(function(e,t) {
+			loadAccountList(); 
+		})
 
 		$('#editAccount').on('show.bs.modal', function (event) {
-			console.log('onShow');
 			var button = $(event.relatedTarget) // Button that triggered the modal
 			console.log(button.data('account'));
 			var accountData = (button.data('account')) // Extract info from data-* attributes

@@ -57,8 +57,8 @@ use Carbon\Carbon;
                         $weekStartDate = Carbon::now()->startOfWeek();
                         $weekEndDate = Carbon::now()->endOfWeek();
                         
-                        $monthStartDate = Carbon::now()->startOfWeek();
-                        $monthEndDate = Carbon::now()->endOfWeek();
+                        $monthStartDate = Carbon::now()->startOfMonth();
+                        $monthEndDate = Carbon::now()->endOfMonth();
 
                         $prevWeekStartDate = Carbon::now()->subWeek()->startOfWeek();
                         $prevWeekEndDate = Carbon::now()->subWeek()->endOfWeek();

@@ -1,6 +1,7 @@
 <?php
 use Models\Zone;
 $zoneList = Zone::get();
+validateLogin(true, false);//check account login
 // var_dump($zoneList);
 ?>
 			<div class="page-content">

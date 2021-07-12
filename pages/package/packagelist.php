@@ -3,6 +3,7 @@ use Models\DepositType;
 use Carbon\Carbon;
 
 $listDepType = DepositType::get();
+validateLogin(true, false);//check account login
 ?>	
 <div class="page-content">
 

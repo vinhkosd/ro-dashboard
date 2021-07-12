@@ -1,6 +1,7 @@
 <?php
 use Models\DepositType; 
 use Carbon\Carbon; 
+validateLogin(true, false);//check account login
 ?>
 <div class="page-content">
 	<nav class="page-breadcrumb">
