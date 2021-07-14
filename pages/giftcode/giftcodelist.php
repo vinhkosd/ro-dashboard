@@ -20,7 +20,7 @@ $giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
 		<div class="col-md-12 grid-margin stretch-card">
 			<div class="card">
 				<div class="card-body col-md-12" style="display:flex">
-		            <div class="col-md-6">
+		            <div class="col-md-2">
 		                <h6 class="card-title">Chọn loại giftCode</h6>
 		                <div class="input-group">
 		                   <select id="giftCat" name="giftCat" value="0">
@@ -33,16 +33,31 @@ $giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
 		                   	</select>
 		                </div>
 		            </div>
-		            <div class="col-md-3">
+		            <div class="col-md-2">
+		                <h6 class="card-title">Sử dụng</h6>
+		                <div class="input-group">
+		                   <select id="giftUsed" name="giftUsed" value="0">
+		                   		<option value=0>Tất cả</option>
+		                   		<option value=1>Đã sử dụng</option>
+		                   		<option value=2>Chưa sử dụng</option>
+		                   	</select>
+		                </div>
+		            </div>
+		            <div class="col-md-2">
 		            	<h6 class="card-title">Xuất file</h6>
 		                <button id="exportToFile" type="button" class="btn btn-primary">Xuất file</button>
+		            </div>
+		            <div class="col-md-2">
+		            	<h6 class="card-title">Tạo GiftCODE</h6>
+		                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createGiftCode" >Tạo</button>
+		            </div>
+		            <div class="col-md-3">
+		            	<h6 class="card-title">Reload</h6>
+		                <button id="reloadDataButton" type="button" class="btn btn-primary">Reload</button>
 		            </div>
 		        </div>
 				<div class="card-body">
 					<h6 class="card-title">Danh sách gói</h6>
-					<p class="card-description"><a id="reloadDataButton" href="javascript:void(0)"> Tải lại </a>
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createGiftCode" >Tạo</button>
-					</p>
 					<div class="table-responsive">
 						<table id="dataTableExample" class="table">
 							<thead>
@@ -176,8 +191,10 @@ $giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
 		$('#dataTableExample tbody').html("Loading...");
 		
 		var giftCat = $('#giftCat').val();
+		var giftUsed = $('#giftUsed').val();
 		var params = {
-			GiftID: giftCat
+			GiftID: giftCat,
+			GiftUsed: giftUsed
 		};
 		
 		$.post("<?php homePath()?>ajax/giftcodelist.php", params, (data) => {
@@ -224,6 +241,7 @@ $giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
 	
 	$('#reloadDataButton').click(function(e,t) {
 		loadAccountList(); 
+		loadCategoryGiftCode();
 	})
 	
 	$('#editAccount').on('show.bs.modal', function (event) {
@@ -301,6 +319,10 @@ $giftCodeCategorys = $giftCodeQuery->get(['GiftID', 'Title']);
     }
     
     $('#giftCat').change(function(e,t) {
+		loadAccountList(); 
+	})
+	
+	$('#giftUsed').change(function(e,t) {
 		loadAccountList(); 
 	})
 	

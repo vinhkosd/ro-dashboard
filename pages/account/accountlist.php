@@ -142,7 +142,7 @@ validateLogin(true, false);//check account login
 			var currentPage = $('#dataTableExample').DataTable().page.info().page;
 			dt = $('#dataTableExample').DataTable().destroy();
 			// $('#dataTableExample tbody').html("Loading...");
-			 $('#dataTableExample').DataTable({
+			dt = $('#dataTableExample').DataTable({
 				"aLengthMenu": [
 					[10, 30, 50, -1],
 					[10, 30, 50, "Tất cả"]
@@ -179,8 +179,6 @@ validateLogin(true, false);//check account login
 			        var tr = $(this).closest('tr');
 			        var row = $('#dataTableExample').DataTable().row( tr );
 			        $(this).find('button').attr('data-account', JSON.stringify(row.data()));
-			        console.log(row.data());
-			        console.log($(this));
 			    });
 		    });
 		    

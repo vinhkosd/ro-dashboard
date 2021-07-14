@@ -17,7 +17,7 @@ $typeOrder = !empty($_GET['order']) && !empty($_GET['order'][0]) && !empty($_GET
 if(!empty($searchText)) {
     $whereClause = [];
     foreach($columns as $key => $value) {
-        if($value['searchable'] && !empty($value['data'])) {
+        if(isset($value['searchable']) && filter_var($value['searchable'], FILTER_VALIDATE_BOOLEAN) && !empty($value['data'])) {
             $accountList->orWhereRaw("cast(".$value['data']." as CHAR) like '%$searchText%'");
         }
         

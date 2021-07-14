@@ -13,7 +13,7 @@ if(isset($_POST)){
     }
     
     for ($i = 1; $i <= intval($input['count']); $i++) {
-        $codeRandom = empty($input['prefix']) ? Str::random(intval($input['codelen'])) : $input['prefix'].Str::random(intval($input['codelen']));
+        $codeRandom = empty($input['prefix']) ? strtoupper(Str::random(intval($input['codelen']))) : strtoupper($input['prefix'].Str::random(intval($input['codelen'])));
         $giftCodeArray = collect($input)->only(['id', 'GiftID', 'ItemID', 'Title', 'BuyType'])->toArray();
         $giftCodeArray['Code'] = $codeRandom;
         GiftCode::insert($giftCodeArray);

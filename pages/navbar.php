@@ -31,6 +31,9 @@
                   <a href="<?php homePath();?>pages/account/accountlist" class="nav-link">Danh sách tài khoản</a>
                 </li>
                 <li class="nav-item">
+                  <a href="<?php homePath();?>pages/account/accountlogin" class="nav-link">Danh sách đăng nhập</a>
+                </li>
+                <li class="nav-item">
                   <a href="<?php homePath();?>pages/account/accountlogs" class="nav-link">Logs</a>
                 </li>
                 <li class="nav-item">
