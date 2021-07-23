@@ -1,0 +1,38 @@
+Table custom charge_config
+
+charge_title = 'Tên loại nạp. Ví dụ : GOPAY'
+
+list_component = json([InfoBox, Image, Input, Select, InputNumber]) chứa các config của các component ( Input, Select, InputNumber, Image, InfoBox )
+		index sẽ là :	0		1 		2		3			4
+
+component_config = json([
+	0 => 'content' = 'Scan and pay on GOPAY',
+	1 => 'content' = '/img/gopay.png', align: center/left/right/custom pixel
+	2 => 'placeholder' = 'Enter your InvoiceID', 
+						'label' = 'InvoiceID',
+						filterType = null/số([0-9])/chữ thường([a-z])/chữ hoa([A-Z])/chữ hoa thường(a-zA-Z)/chữ & số (a-zA-Z0-9)/chữ & số & 1 số kí tự (a-zA-Z0-9._@%-), 
+						'disabled/readonly' = true/false,
+						'required' = true/false,
+	3 => 'placeholder' = 'Select your type', 'label' = 'TypePaid', 'item' = [		//title => value
+																					'Bussiness' => 'bussiness'
+																					'Personal' => 'personal'
+																					],
+						'disabled/readonly' = true/false,
+						'required' = true/false,
+	4 => 'placeholder' = 'Enter Paid Amount', 'label' = 'Paid Amount',
+		'disabled/readonly' = true/false,
+		'required' = true/false,
+])
+
+region = 'Indonesia'
+
+panel hiện
+
+column -> tên tài khoản, loại, số tiền, giờ, chức năng
+
+chargecustom_logs
+
+accid	account			 type_charge   money		 createdate		  status 0/1/2/3 0:chưa làm gì, 1: không hợp lệ, 2: sửa giá, 3: thành công
+
+		 tên tài khoản |	 loại	| số tiền| 			giờ			| chức năng
+		 vinh8c059			GOPAY		10$		15/07/2021/ 12:51		Duyệt / Sửa Giá / Từ chối

@@ -11,6 +11,8 @@ require __DIR__.'/app/index.php';
 	<link rel="stylesheet" href="<?php homePath();?>assets/vendors/core/core.css">
 	<!-- endinject -->
   <!-- plugin css for this page -->
+  <link rel="stylesheet" href="<?php homePath();?>assets/vendors/select2/select2.min.css">
+  <link rel="stylesheet" href="<?php homePath();?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.css">
 	<link rel="stylesheet" href="<?php homePath();?>assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
 	<!-- end plugin css for this page -->
 	<!-- inject:css -->
@@ -81,6 +83,8 @@ require __DIR__.'/app/index.php';
   <script src="<?php homePath();?>assets/vendors/apexcharts/apexcharts.min.js"></script>
   <script src="<?php homePath();?>assets/vendors/progressbar.js/progressbar.min.js"></script>
   <script src="<?php homePath();?>assets/vendors/inputmask/jquery.inputmask.min.js"></script>
+  <script src="<?php homePath();?>assets/vendors/select2/select2.min.js"></script>
+  <script src="<?php homePath();?>assets/vendors/jquery-tags-input/jquery.tagsinput.min.js"></script>
 	<!-- end plugin js for this page -->
 	<!-- inject:js -->
 	<script src="<?php homePath();?>assets/vendors/feather-icons/feather.min.js"></script>

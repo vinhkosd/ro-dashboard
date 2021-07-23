@@ -11,7 +11,7 @@ $accountList->leftJoin('account', 'account.id', '=', 'account_login.accid');
 $limit = $_GET['length'] ?? null;
 $offset = $_GET['start'] ?? null;
 $searchText = $_GET['search']['value'] ?? null;
-$page = floor($offset/$limit);
+$page = floor($offset/$limit) + 1;
 
 $fromDate = !empty($_GET['fromDate']) ? Carbon::createFromFormat('d/m/Y', $_GET['fromDate'])->startOfDay() : false;
 $toDate = !empty($_GET['toDate']) ? Carbon::createFromFormat('d/m/Y', $_GET['toDate'])->endOfDay() : false;
@@ -37,6 +37,8 @@ if(!empty($orderBy) && !empty($orderBy['data']) && $orderBy['orderable']) {
     $accountList->orderBy($orderBy['data'], $typeOrder);
 }
 
+$accountList->distinct('accid');
+
 
 
 $columns = [
@@ -47,10 +49,10 @@ $columns = [
     'account.old_email'
 ];
 
-$countToday = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->count();
-$countYesterday = AccountLogin::whereBetween('logindate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->count();
-$countWeek = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-$countMonth = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+$countToday = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('accid')->count();
+$countYesterday = AccountLogin::whereBetween('logindate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('accid')->count();
+$countWeek = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->distinct('accid')->count();
+$countMonth = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->distinct('accid')->count();
 
 $dataReturn = getPartial($accountList, $limit, $page, $columns);
 $dataReturn['draw'] = $_GET['draw'] ?? null;

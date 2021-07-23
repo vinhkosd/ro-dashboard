@@ -1,6 +1,7 @@
 <?php
 use Models\AccountLogin;
 use Models\PaymentLogs;
+use Models\ChargeCustomLogs;
 use Carbon\Carbon;
 ?>			
       <div class="page-content">
@@ -64,24 +65,37 @@ use Carbon\Carbon;
                         $prevWeekStartDate = Carbon::now()->subWeek()->startOfWeek();
                         $prevWeekEndDate = Carbon::now()->subWeek()->endOfWeek();
                         // DB::enableQueryLog(); // Enable query log
+                        
                         $paymentSumToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->sum('money');
-
                         $paymentCountToday = PaymentLogs::whereBetween('time', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('account')->count();
 
-                        $paymentSumYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
+                        $pendingChargeSumToday = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->sum('money');
+                        $pendingChargeCountToday = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('accid')->count();
+                        
 
+                        $paymentSumYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
                         $paymentCountYesterday = PaymentLogs::whereBetween('time', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('account')->count();
+                        
+                        $pendingChargeSumYesterday = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->sum('money');
+                        $pendingChargeCountYesterday = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('accid')->count();
+                        
+
                         $paymentSumWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->sum('money');
                         $paymentCountWeek = PaymentLogs::whereBetween('time', [$weekStartDate, $weekEndDate])->distinct('account')->count();
-                        $paymentSumPrevWeek = PaymentLogs::whereBetween('time', [$prevWeekStartDate, $prevWeekEndDate])->sum('money');
+                        
+                        $pendingChargeSumWeek = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$weekStartDate, $weekEndDate])->sum('money');
+                        $pendingChargeCountWeek = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$weekStartDate, $weekEndDate])->distinct('accid')->count();
                         
                         $paymentSumMonth = PaymentLogs::whereBetween('time', [$monthStartDate, $monthEndDate])->sum('money');
                         $paymentCountMonth = PaymentLogs::whereBetween('time', [$monthStartDate, $monthEndDate])->distinct('account')->count();
+                        
+                        $pendingChargeSumMonth = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$monthStartDate, $monthEndDate])->sum('money');
+                        $pendingChargeCountMonth = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$monthStartDate, $monthEndDate])->distinct('accid')->count();
                       ?>
-                        <h3 class="mb-2"><?php echo number_format($paymentSumToday);?>.00$</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumToday + $pendingChargeSumToday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo number_format($paymentCountToday);?> người nạp</span>
+                            <span><?php echo number_format($paymentCountToday + $pendingChargeCountToday);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
@@ -113,10 +127,10 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday);?>.00$</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday + $pendingChargeSumYesterday);?>.00$</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo number_format($paymentCountYesterday);?> người nạp</span>
+                            <span><?php echo number_format($paymentCountYesterday + $pendingChargeCountYesterday);?> người nạp</span>
                             <!-- <i data-feather="arrow-down" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
@@ -191,10 +205,10 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek).'.00$';?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek + $pendingChargeSumWeek).'.00$';?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo $paymentCountWeek;?> người nạp</span>
+                            <span><?php echo number_format($paymentCountWeek + $pendingChargeCountWeek);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
@@ -226,10 +240,10 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumMonth).'.00$';?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumMonth + $pendingChargeSumMonth).'.00$';?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
-                            <span><?php echo $paymentCountMonth;?> người nạp</span>
+                            <span><?php echo number_format($paymentCountMonth + $pendingChargeCountMonth);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
                           </p>
                         </div>
@@ -269,10 +283,10 @@ use Carbon\Carbon;
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
                       <?php
-                        $countLoginToday = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->count();
-                        $countLoginYesterday = AccountLogin::whereBetween('logindate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->count();
-                        $countLoginWeek = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->count();
-                        $countLoginMonth = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->count();
+                        $countLoginToday = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('accid')->count();
+                        $countLoginYesterday = AccountLogin::whereBetween('logindate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('accid')->count();
+                        $countLoginWeek = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->distinct('accid')->count();
+                        $countLoginMonth = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->distinct('accid')->count();
                       ?>
                         <h3 class="mb-2"><?php echo number_format($countLoginToday);?></h3>
                       </div>
@@ -391,6 +405,9 @@ use Carbon\Carbon;
                     <button type="button" class="btn btn-outline-primary" id="registerChart">
                       Số lượng đăng ký
                     </button>
+                    <button type="button" class="btn btn-outline-primary" id="accountLoginChart">
+                      Đăng nhập
+                    </button>
                   </div>
                   <div class="col-md-5 d-flex justify-content-md-end">
                     <div class="btn-group mb-3 mb-md-0" role="group" aria-label="Basic example">
@@ -414,13 +431,13 @@ use Carbon\Carbon;
       $(document).ready(function() {
         var chartPaymentRegister = {destroy: () => {}};
         function loadChartHome(type = 'payment') {
-          if(type !== 'payment') {
-            $('#paymentChart').removeClass('btn-primary').addClass('btn-outline-primary');
-            $('#registerChart').addClass('btn-primary').removeClass('btn-outline-primary');
-          } else {
-            $('#registerChart').removeClass('btn-primary').addClass('btn-outline-primary');
-            $('#paymentChart').addClass('btn-primary').removeClass('btn-outline-primary');
-          }
+          // if(type !== 'payment') {
+          //   $('#paymentChart').removeClass('btn-primary').addClass('btn-outline-primary');
+          //   $('#registerChart').addClass('btn-primary').removeClass('btn-outline-primary');
+          // } else {
+          //   $('#registerChart').removeClass('btn-primary').addClass('btn-outline-primary');
+          //   $('#paymentChart').addClass('btn-primary').removeClass('btn-outline-primary');
+          // }
 
           var listDate = [];
 
@@ -431,12 +448,31 @@ use Carbon\Carbon;
             listDate.push(`Ngày ${i}`);
           }
 
-          console.log(listDate);
           var dataChart = [];
-          var urlPost = "<?php homePath()?>ajax/getpaymentchartdata.php";
-          if(type !== 'payment') {
-            urlPost = "<?php homePath()?>ajax/getregisterchartdata.php";
+          var urlPost = "";
+          var dataName = "";
+          $('#registerChart').removeClass('btn-primary').addClass('btn-outline-primary');
+          $('#paymentChart').removeClass('btn-primary').addClass('btn-outline-primary');
+          $('#accountLoginChart').removeClass('btn-primary').addClass('btn-outline-primary');
+          
+          switch(type) {
+            case 'payment':
+              urlPost = "<?php homePath()?>ajax/getpaymentchartdata.php";
+              $('#paymentChart').addClass('btn-primary').removeClass('btn-outline-primary');
+              dataName = "USD";
+              break;
+            case 'register':
+              urlPost = "<?php homePath()?>ajax/getregisterchartdata.php";
+              $('#registerChart').addClass('btn-primary').removeClass('btn-outline-primary');
+              dataName = "Đăng ký";
+              break;
+            case 'accountlogin':
+              urlPost = "<?php homePath()?>ajax/getaccountloginchartdata.php";
+              $('#accountLoginChart').addClass('btn-primary').removeClass('btn-outline-primary');
+              dataName = "Đăng nhập";
+              break;
           }
+          
           $.post(urlPost, (data) => {
             console.log(data);
             for(var i = 1;i <= countDayOfMonth; i++) {
@@ -444,15 +480,15 @@ use Carbon\Carbon;
             }
             console.log(dataChart);
             if($('#chartPaymentRegister').length) {
-              loadApexCharts(type, listDate, dataChart);
+              loadApexCharts(type, listDate, dataChart, dataName);
             }
           });
         }
 
-        function loadApexCharts(type, listDate, dataSet){
+        function loadApexCharts(type, listDate, dataSet, dataName){
           var options = {
           series: [{
-            name: type == 'payment' ? 'USD' : 'Đăng ký',
+            name:dataName,
             data: dataSet
           }],
             chart: {
@@ -469,7 +505,7 @@ use Carbon\Carbon;
             curve: 'straight'
           },
           title: {
-            text: `Thống kê ${type == 'payment' ? 'Nạp thẻ' : 'Đăng ký'} theo tháng`,
+            text: `Thống kê ${dataName} theo tháng`,
             align: 'left'
           },
           grid: {
@@ -492,5 +528,6 @@ use Carbon\Carbon;
         loadChartHome();
         $('#paymentChart').click(() => loadChartHome('payment'));
         $('#registerChart').click(() => loadChartHome('register'));
+        $('#accountLoginChart').click(() => loadChartHome('accountlogin'));
       });
       </script>

@@ -9,7 +9,7 @@ $accountList = Account::query();
 $limit = $_GET['length'] ?? null;
 $offset = $_GET['start'] ?? null;
 $searchText = $_GET['search']['value'] ?? null;
-$page = floor($offset/$limit);
+$page = floor($offset/$limit) + 1;
 
 $columns = $_GET['columns'] ?? [];
 $orderBy = !empty($_GET['order']) && !empty($_GET['order'][0]) ? $columns[$_GET['order'][0]['column']] : false;

@@ -68,10 +68,10 @@ function renderNavbar() {
     } 
 }
 
-function getPartial($queryData = [], $limit = 100, $page = 1, $columns = [])
+function getPartial($queryData = [], $limit = 100, $page = 1, $columns = [], $typicalOffset = null)
 {
     $data = [];
-    $offset = ($page - 1) * $limit;
+    $offset = $typicalOffset ? $typicalOffset : (($page - 1) * $limit);
     $totalRecord = $queryData->count();
 
     if ($totalRecord) {

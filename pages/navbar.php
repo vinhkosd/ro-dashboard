@@ -167,6 +167,24 @@
               <span class="link-title">GiftCode</span>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="<?php homePath();?>pages/charge/chargepending" class="nav-link">
+              <i class="link-icon" data-feather="book"></i>
+              <span class="link-title">Quản lý nạp chậm</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?php homePath();?>pages/charge/lognapchung" class="nav-link">
+              <i class="link-icon" data-feather="book"></i>
+              <span class="link-title">Log nạp chung</span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="<?php homePath();?>pages/charge/configcharge" class="nav-link">
+              <i class="link-icon" data-feather="book"></i>
+              <span class="link-title">Quản lý ngân hàng</span>
+            </a>
+          </li>
           <!-- <li class="nav-item">
             <a class="nav-link" data-toggle="collapse" href="#forms" role="button" aria-expanded="false" aria-controls="forms">
               <i class="link-icon" data-feather="inbox"></i>
