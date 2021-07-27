@@ -92,7 +92,7 @@ use Carbon\Carbon;
                         $pendingChargeSumMonth = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$monthStartDate, $monthEndDate])->sum('money');
                         $pendingChargeCountMonth = ChargeCustomLogs::where(function($query) { $query->where('status', 3); $query->orWhere('status', 2); })->whereBetween('createdate', [$monthStartDate, $monthEndDate])->distinct('accid')->count();
                       ?>
-                        <h3 class="mb-2"><?php echo number_format($paymentSumToday + $pendingChargeSumToday);?>.00$</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumToday + $pendingChargeSumToday, 2);?>$</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
                             <span><?php echo number_format($paymentCountToday + $pendingChargeCountToday);?> người nạp</span>
@@ -127,7 +127,7 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday + $pendingChargeSumYesterday);?>.00$</h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumYesterday + $pendingChargeSumYesterday, 2);?>$</h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
                             <span><?php echo number_format($paymentCountYesterday + $pendingChargeCountYesterday);?> người nạp</span>
@@ -205,7 +205,7 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek + $pendingChargeSumWeek).'.00$';?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumWeek + $pendingChargeSumWeek, 2).'$';?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
                             <span><?php echo number_format($paymentCountWeek + $pendingChargeCountWeek);?> người nạp</span>
@@ -240,11 +240,13 @@ use Carbon\Carbon;
                     </div>
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
-                        <h3 class="mb-2"><?php echo number_format($paymentSumMonth + $pendingChargeSumMonth).'.00$';?></h3>
+                        <h3 class="mb-2"><?php echo number_format($paymentSumMonth + $pendingChargeSumMonth, 2).'$';?></h3>
                         <div class="d-flex align-items-baseline">
                           <p class="text-success">
                             <span><?php echo number_format($paymentCountMonth + $pendingChargeCountMonth);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
+                            <?php echo ($pendingChargeSumMonth).'$';?>
+                            <?php echo ($paymentSumMonth).'$';?>
                           </p>
                         </div>
                       </div>
@@ -476,7 +478,7 @@ use Carbon\Carbon;
           $.post(urlPost, (data) => {
             console.log(data);
             for(var i = 1;i <= countDayOfMonth; i++) {
-              dataChart.push(parseInt(data[i] && data[i].agg ? data[i].agg : 0, 10));
+              dataChart.push(parseFloat(data[i] && data[i].agg ? data[i].agg : 0).toFixed(2));
             }
             console.log(dataChart);
             if($('#chartPaymentRegister').length) {

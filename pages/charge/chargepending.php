@@ -65,7 +65,8 @@ tr.details td.details-control {
     						<th>Tài khoản</th>
     						<th>CreateDate</th>
     						<th>ChargeID</th>
-    						<th>Money</th>
+    						<th>Money(USD)</th>
+    						<th>Money(theo vùng)</th>
     						<th>Chức năng</th>
                         </tr>
                         </thead>
@@ -260,7 +261,7 @@ $(document).ready(function() {
                     "data":           null,
                     "defaultContent": ""
                 },
-	            { "data": "img",
+	            { "data": "img" , "searchable" : false,
 	                render: function(data, type, row, meta) {
 	                    return '<div style="background: white;width: 58px;height: 40px;"><div class="logo" style="width: 58px;height: 40px;border: 1px solid #bebebe;margin: 0 0px;background-size: contain;background-repeat: no-repeat;background-position: 50%;background-image: url(\'<?php homePath()?>'+row.img+'\');"></div></div>';
 	                }
@@ -271,6 +272,7 @@ $(document).ready(function() {
 	            { "data": "createdate" , "searchable" : false },
 	            { "data": "charge_title" },
 	            { "data": "money" , "searchable" : false },
+	            { "data": "region_money" , "searchable" : false },
 	            {
 		                "orderable":      false,
 		                "data":           "function",
@@ -318,7 +320,7 @@ $(document).ready(function() {
                     status: 3
                 }
                 console.log(params);
-                confirmModal(`Vui lòng xác nhận duyệt nạp ${params.money}.00$ cho account ${params.account}`, () => chargeStatus(params));
+                confirmModal(`Vui lòng xác nhận duyệt nạp ${parseFloat(params.money).toFixed(2)} $ cho account ${params.account}`, () => chargeStatus(params));
             });
             
             $('.btn-sua-gia').click(function() {
@@ -361,7 +363,7 @@ $(document).ready(function() {
                 money,
                 status: 2
             }
-            confirmModal(`Vui lòng xác nhận sửa giá ${dataJson.money}.00$ thành ${money}.00$ cho account ${params.account}`, () => chargeStatus(params));
+            confirmModal(`Vui lòng xác nhận sửa giá ${parseFloat(dataJson.money).toFixed(2)} $ thành ${parseFloat(money).toFixed(2)} $ cho account ${params.account}`, () => chargeStatus(params));
             // chargeStatus(params);
             $('#suaGiaModal').modal('hide');
             return false;
@@ -402,7 +404,7 @@ $(document).ready(function() {
                 
                 chiTietDoanhThuBody += `<tr class=\"table-info text-dark\">\n`;
                 chiTietDoanhThuBody += `    <td>Doanh thu</td>\n` ;
-                chiTietDoanhThuBody += `    <td>${dt.ajax.json().totalAmount}.00 USD</td>\n` ;
+                chiTietDoanhThuBody += `    <td>${parseFloat(dt.ajax.json().totalAmount ? dt.ajax.json().totalAmount : 0).toFixed(2)} USD</td>\n` ;
                 chiTietDoanhThuBody += `</tr>\n` ;
                 
                 chiTietDoanhThuBody += `<tr class=\"table-info text-dark\">\n`;

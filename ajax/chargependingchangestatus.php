@@ -21,17 +21,17 @@ if(empty($chargeLogInfo)) {
         if(empty($chargeConfigInfo)) {
             echo(json_encode(['error' => 'Không tìm thấy bank! vui lòng thử lại']));
         } else {
-            if(intval($input['money']) > 0 && $input['status'] > 1) {//nạp thành công
+            if(floatval($input['money']) > 0 && $input['status'] > 1) {//nạp thành công
                 $accountLogsData = [
                     'account'     => $input['account'],
                     'log_title'   => $chargeConfigInfo['charge_title'].' recharge success',
-                    'log_content' => "Recharge [" . $input['money'] . "] USD" ,
+                    'log_content' => "Recharge [" . $chargeLogInfo['region_money'] . "] ".$chargeLogInfo['currency']." (" . $input['money'] . " USD) success" ,
                     'log_time'    => Carbon::now(),
                     'type'        => 'payment',
                 ];
                 
                 AccountLogs::insert($accountLogsData);
-                Account::where('id', $input['accid'])->increment('money', intval($input['money']));
+                Account::where('id', $input['accid'])->increment('money', floatval($input['money']));
             } else {
                 $accountLogsData = [
                     'account'     => $input['account'],

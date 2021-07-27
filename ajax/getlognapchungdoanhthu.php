@@ -11,6 +11,7 @@ $toDate = !empty($_POST['toDate']) ? Carbon::createFromFormat('d/m/Y', $_POST['t
 $paymentLogs = PaymentLogs::query();
 $pendingChargeLogs = ChargeCustomLogs::query();
 $pendingChargeLogs->leftJoin('charge_config', 'charge_config.id', '=', 'chargecustom_logs.type_charge');
+$pendingChargeLogs->where('status', '>', 1);
 if($fromDate && $toDate) {
     $paymentLogs->whereBetween('time', [$fromDate, $toDate]);
     $pendingChargeLogs->whereBetween('createdate', [$fromDate, $toDate]);

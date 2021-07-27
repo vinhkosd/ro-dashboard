@@ -161,7 +161,7 @@ validateLogin(true, false);//check account login
 			            { "data": "money" , "searchable" : false },
 			            { "data": "createdate" },
 			            { "data": "charge_title"},
-			            { "data": "img",
+			            { "data": "img" , "searchable" : false,
 			                render: function(data, type, row, meta) {
 			                    return '<div style="background: white;width: 58px;height: 40px;"><div class="logo" style="width: 58px;height: 40px;border: 1px solid #bebebe;margin: 0 0px;background-size: contain;background-repeat: no-repeat;background-position: 50%;background-image: url(\'<?php homePath()?>'+row.img+'\');"></div></div>';
 			                }
@@ -200,7 +200,7 @@ validateLogin(true, false);//check account login
 		                chiTietDoanhThuBody += `    <td>${$('#fromDate input').val()}</td>\n` ;
 		                chiTietDoanhThuBody += `    <td>${$('#toDate input').val()}</td>\n` ;
 		                chiTietDoanhThuBody += `    <td>${item['charge_title']}</td>\n` ;
-		                chiTietDoanhThuBody += `    <td>${item['money']}</td>\n` ;
+		                chiTietDoanhThuBody += `    <td>${parseFloat(item['money']).toFixed(2)}</td>\n` ;
 		                chiTietDoanhThuBody += `</tr>\n` ;
 					});
 					
@@ -227,7 +227,7 @@ validateLogin(true, false);//check account login
 		                `                                    <td>${$('#fromDate input').val()}</td>\n` +
 		                `                                    <td>${$('#toDate input').val()}</td>\n` +
 		                `                                    <td>Tổng doanh thu</td>\n` +
-		                `                                    <td>${tongDoanhThu} USD</td>\n` +
+		                `                                    <td>${parseFloat(tongDoanhThu).toFixed(2)} USD</td>\n` +
 		                `                                </tr>\n` ;
 		            
 		            $('#chiTietDoanhThu tbody').html(chiTietDoanhThuBody);

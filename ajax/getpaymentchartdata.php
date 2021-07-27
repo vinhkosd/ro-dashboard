@@ -9,6 +9,7 @@ header('Content-Type: application/json');
 $fromDate = Carbon::now()->startOfMonth();
 $toDate = Carbon::now()->endOfMonth();
 $paymentLogs = PaymentLogs::query();
+$pendingLogs = ChargeCustomLogs::query();
 
 // if($fromDate && $toDate) {
 //     $paymentLogs->whereBetween('time', [$fromDate, $toDate]);
@@ -29,30 +30,50 @@ $paymentLogs = PaymentLogs::query();
 // $dataReturn = ChargeCustomLogs::whereBetween('createdate', [$fromDate, $toDate])
 //             ->union($paymentLogs)
 //             ->get($columnPending);
-            
-$dataReturn = DB::select('select sum(agg) as agg,
-			                     day
-                from
-                (SELECT
-                	sum(money) as agg,
-                	day(time) as day
-                FROM
-                	`payment_logs`
-                WHERE
-                	`time` BETWEEN ? AND ?
-                GROUP BY
-                	DAY (
-                	time)
-                UNION
-                SELECT 
-                    sum(money) as agg,
-                    day(createdate) as day 
-                FROM chargecustom_logs
-                WHERE
-                	`createdate` BETWEEN ? AND ?
-                	and status > 1
-                group by day(createdate)
-                ) datachart
-                group by day', [$fromDate, $toDate, $fromDate, $toDate]);
-echo(json_encode(collect($dataReturn)->keyBy('day')));
+$dataReturn = [];
+
+if($fromDate && $toDate) {
+    $paymentLogs->whereBetween('time', [$fromDate, $toDate]);
+    $pendingLogs->whereBetween('createdate', [$fromDate, $toDate]);
+}
+
+$columnPaypal = [
+    DB::raw('sum(money) as agg'),
+    DB::raw('day(time) as day')
+];
+
+$columnPending = [
+    DB::raw('sum(money) as agg'),
+    DB::raw('day(createdate) as day')
+];
+
+$pendingLogs->where('status', '>', 1);
+
+$paymentLogs->groupByRaw('day(time)');
+$pendingLogs->groupByRaw('day(createdate)');
+
+$dataPaypal = $paymentLogs->get($columnPaypal);
+$dataPending = $pendingLogs->get($columnPending);
+// die(json_encode($dataPaypal));
+// die();
+
+$dataPaypal->map(function($item) use (&$dataReturn) {
+    // echo json_encode($item)."\r\n";
+    if(!isset($dataReturn[$item['day']])) {
+        $dataReturn[$item['day']] = [];
+        $dataReturn[$item['day']]['agg'] = 0;
+        $dataReturn[$item['day']]['day'] = $item['day'];
+    }
+    $dataReturn[$item['day']]['agg'] += floatval($item['agg']);
+    // echo json_encode($dataReturn);
+});
+$dataPending->map(function($item) use (&$dataReturn) {
+    if(!isset($dataReturn[$item['day']])) {
+        $dataReturn[$item['day']] = [];
+        $dataReturn[$item['day']]['agg'] = 0;
+        $dataReturn[$item['day']]['day'] = $item['day'];
+    }
+    $dataReturn[$item['day']]['agg'] += floatval($item['agg']);
+});
+echo(json_encode($dataReturn));
 ?>

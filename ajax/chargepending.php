@@ -64,6 +64,7 @@ $columns = [
 // }
 foreach($dataReturn['data'] as $key => $value) {
     $value['function'] = "";
+    $value['region_money'] .= ' '.$value["currency"];
     if($value['status'] == 0) {//chưa duyệt
         $value['function'] = "<button type=\"button\" class=\"btn-duyet btn btn-success\">Duyệt</button>
         					<button type=\"button\" class=\"btn-sua-gia btn btn-warning\">Sửa giá</button>
