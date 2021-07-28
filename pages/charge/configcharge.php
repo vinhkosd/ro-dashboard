@@ -152,7 +152,7 @@ li:hover span {
 	<div class="modal-dialog" role="document">
 		<div class="modal-content">
 			<div class="modal-header">
-				<h5 class="modal-title" id="editAccountLabel">Sửa gói</h5>
+				<h5 class="modal-title" id="editAccountLabel">Sửa bank</h5>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span>
 				</button>
 			</div>
@@ -173,13 +173,6 @@ li:hover span {
 					<div class="form-group">
 						<label for="Title" class="col-form-label">Tên gói:</label>
 						<input type="text" name="Title" class="form-control" />
-					</div>
-					<div class="form-group">
-						<label for="BuyType" class="col-form-label">Loại mua:</label>
-						<select class="form-control" name="BuyType">
-						    <option value=2>Riêng</option>
-							<option value=1>Chung</option>
-						</select>
 					</div>
 				</form>
 			</div>
