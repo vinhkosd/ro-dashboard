@@ -137,8 +137,13 @@ if($countPaypal < $limit) {
     $countTakeNapCham = abs($limit - $countPaypal);
     $dataReturn['data'] = collect($dataReturn['data'])->concat(collect($dataNapCham['data'])->take($countTakeNapCham));
 }
-
-
+$dataReturn['data'] = collect($dataReturn['data'])->map(function($item){
+    $d = DateTime::createFromFormat('Y-m-d H:i:s', $item['createdate']);
+    if ($d !== false) {
+       $item['createdate'] = $d->getTimestamp();
+    }
+    return $item;
+});
 
 $dataReturn['recordsTotal'] += $dataNapCham['totalRecord'];
 $dataReturn['recordsFiltered'] += $dataNapCham['totalRecord'];

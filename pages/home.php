@@ -245,8 +245,6 @@ use Carbon\Carbon;
                           <p class="text-success">
                             <span><?php echo number_format($paymentCountMonth + $pendingChargeCountMonth);?> người nạp</span>
                             <!-- <i data-feather="arrow-up" class="icon-sm mb-1"></i> -->
-                            <?php echo ($pendingChargeSumMonth).'$';?>
-                            <?php echo ($paymentSumMonth).'$';?>
                           </p>
                         </div>
                       </div>

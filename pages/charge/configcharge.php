@@ -203,6 +203,11 @@ li:hover span {
 						<label for="region" class="col-form-label">Tên khu vực:</label>
 						<input type="text" name="region" class="form-control" required/>
 					</div>
+					
+					<div class="form-group">
+						<label for="region" class="col-form-label">Link IMG:</label>
+						<input type="text" name="img" class="form-control" required/>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">

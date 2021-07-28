@@ -159,7 +159,11 @@ validateLogin(true, false);//check account login
 			            { "data": "accid" },
 			            { "data": "account" },
 			            { "data": "money" , "searchable" : false },
-			            { "data": "createdate" },
+			            { "data": "createdate" , 
+			            	render: function(data, type, row, meta) {
+			                    return moment(data*1000).format('DD/MM/YYYY HH:mm:ss');
+		                	}
+			            },
 			            { "data": "charge_title"},
 			            { "data": "img" , "searchable" : false,
 			                render: function(data, type, row, meta) {

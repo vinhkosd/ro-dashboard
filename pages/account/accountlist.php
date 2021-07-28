@@ -81,6 +81,13 @@ validateLogin(true, false);//check account login
 						<label for="regtime" class="col-form-label">Thời gian đăng ký:</label>
 						<input type="text" id="regtime" name="regtime" class="form-control" data-inputmask="'alias': 'datetime', 'clearIncomplete': true" data-inputmask-inputformat="yyyy-mm-dd HH:MM:ss" readonly/>
 					</div>
+					<div class="form-group">
+						<label for="active" class="col-form-label">Khoá tài khoản:</label>
+						 <select class="form-control" name="active" required>
+	                        	<option value="0">Không khoá</option>
+	                        	<option value="1">Khoá tài khoản</option>
+	                        </select>
+					</div>
 					</form>
 				</div>
 				<div class="modal-footer">
@@ -227,7 +234,7 @@ validateLogin(true, false);//check account login
 		loadAccountList();
 		
 		$('#reloadDataButton').click(function(e,t) {
-			loadAccountList(); 
+			$('#dataTableExample').DataTable().ajax.reload();//reload dữ liệu
 		})
 
 		$('#editAccount').on('show.bs.modal', function (event) {
@@ -286,7 +293,7 @@ validateLogin(true, false);//check account login
 				$('#editAccount').modal('hide');
 			}, "json")
 			.always(function() {
-				loadAccountList();
+				$('#dataTableExample').DataTable().ajax.reload();//reload dữ liệu
 			});
 			return false;
 		});

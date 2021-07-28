@@ -5,7 +5,7 @@ use Illuminate\Support\Collection;
 validateLogin(true, false);//check account login
 
 if(isset($_POST)){
-    $input = collect($_POST)->only(['id', 'account', 'email', 'password'])->map(function ($item, $key) {
+    $input = collect($_POST)->only(['id', 'account', 'email', 'password', 'active'])->map(function ($item, $key) {
         if(empty($item) && $key !== 'money')
             return null;
         return $item;
