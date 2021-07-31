@@ -272,8 +272,10 @@ li:hover span {
                 </div>
                 <div class="form-group">
                     <label for="placeholder" class="col-form-label">Content/Placeholder:</label>
-                    <input type="text" class="form-control" name="placeholder">
+                    <textarea  type="text" class="form-control" name="placeholder" rows="8" cols="50">
+                	</textarea>
                 </div>
+                
                 <div class="form-group">
                     <label for="option" class="col-form-label">Option(cho select, gõ xong enter):</label>
                     <input name="option" id="tags" value="" />
@@ -404,7 +406,6 @@ li:hover span {
 	
 	$('#editAccount').on('show.bs.modal', function (event) {
 	var button = $(event.relatedTarget) // Button that triggered the modal
-	console.log(button.data('account'));
 	var accountData = (button.data('account')) // Extract info from data-* attributes
 	var modal = $(this);
 	//set data to form
@@ -420,7 +421,6 @@ li:hover span {
 	
 	$('#listComponent').on('show.bs.modal', function (event) {
 		var button = $(event.relatedTarget) // Button that triggered the modal
-		console.log(button.data('account'));
 		var accountData = (button.data('account')) // Extract info from data-* attributes
 		
 		if(typeof accountData.component_config == "string" || typeof accountData.list_component == "string") {
@@ -473,11 +473,15 @@ li:hover span {
         var componentConfig = {};
         frmData.map(item => {
         	if(item.name != 'index') {
+        		if(item.name == 'placeholder') {
+        			item.value = item.value.replace(/\r\n/gi, '<br/>');
+        		}
         		componentConfig[item.name] = item.value;
         	} else {
         		index = parseInt(item.value, 10);
         	}
         });
+        console.log(componentConfig);
         
 		$.chargeConfig.component_config[index] = componentConfig;
         $('#saveComponentEditForm').trigger("reset");
@@ -614,7 +618,6 @@ li:hover span {
         for(var i = 0;i < $("ul.draggable-list").children().length; i++){
 			var item = $("ul.draggable-list").children()[i];
 			var innerText = parseInt(item.innerText.split('-')[1], 10);
-			// console.log(item);
 			if(maxIndex <= parseInt(innerText, 10)) maxIndex = parseInt(innerText, 10) + 1;
 		}
 		
@@ -636,7 +639,6 @@ li:hover span {
         
         modal.find('.modal-body input[name=index]').val(index);
         if($.chargeConfig.component_config && $.chargeConfig.component_config[index]) {//nếu đã có config thì load config ra
-        	console.log($.chargeConfig.component_config[index]);
         } else {//chưa có thì tạo mới
         	if(!$.chargeConfig.component_config) $.chargeConfig.component_config = [];
         	for(var i = 0; i <= index; i++) {//vòng lặp từ đầu tiên tới index, nếu config nào chưa có thì tạo mới
@@ -644,11 +646,11 @@ li:hover span {
         			$.chargeConfig.component_config[i] = {};
         		}
         	}
-        	console.log($.chargeConfig.component_config);
         }
         
         Object.keys($.chargeConfig.component_config[index]).map(item => {
             modal.find('.modal-body input[name='+item+']').val($.chargeConfig.component_config[index][item]);
+            modal.find('.modal-body textarea[name='+item+']').val($.chargeConfig.component_config[index][item] ? $.chargeConfig.component_config[index][item].replace(/<br>/gm, '\r\n').replace(/<br\/>/gm, '\r\n') : '');
             modal.find('.modal-body select[name='+item+']').val($.chargeConfig.component_config[index][item]);
             if(typeof modal.find('.modal-body input[name='+item+']').importTags  == "function") {
             	modal.find('.modal-body input[name='+item+']').importTags($.chargeConfig.component_config[index][item]);

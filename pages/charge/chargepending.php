@@ -253,7 +253,7 @@ $(document).ready(function() {
 		                d.status     = $('#typeCard').val();
 		            }
 		        },
-	        "order": [[ 1, "desc" ]],
+	        "order": [[ 2, "desc" ]],
 	        "columns": [
 	            {
                     "class":          "details-control",
