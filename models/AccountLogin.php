@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class AccountLogin extends Model
 {
     //
-    protected $table='account_login';
+    protected $table='account_logininfo';
     
     protected $primaryKey='id';
     

@@ -53,11 +53,12 @@ tr.details td.details-control {
                     </div>
                 </div>
                 <div class="card-body">
-
+                    <button id="cancelAllRecord" type="button" class="btn btn-primary">Huỷ các lệnh đã chọn</button>
                     <div class="table-responsive">
                     <table id="dataTableExample" class="table">
                         <thead>
                         <tr>
+                            <th><input type="checkbox" id="checkAll" name="checkAll" value="checkAll"></th>
                             <th></th>
                             <th>IMG</th>
                             <th>ID</th>
@@ -222,6 +223,7 @@ $(document).ready(function() {
     initDatePicker('toDate');
     
     var dt = [];
+    var checkedIds = [];
     
     function format ( d ) {
         var otherData = JSON.parse(d.otherdata);
@@ -230,6 +232,87 @@ $(document).ready(function() {
             otherDataText += Object.keys(item)[0] + ': ' + Object.values(item)[0] +'<br>';
         });
         return otherDataText;
+    }
+    
+    $('#checkAll').change(function(){
+        isCheckAll = $(this).is(":checked");
+        if(isCheckAll) {
+            checkedIds = [];
+            var dataTable = $('#dataTableExample').DataTable().ajax.json();
+            checkedIds = dataTable.data.map(item=>item.id);
+        } else {
+            checkedIds = [];
+        }
+        console.log(checkedIds);
+        $('#dataTableExample').DataTable().draw();//re-render table
+    });
+    
+    $('#cancelAllRecord').click(function(){
+        if(checkedIds.length > 0) {
+            var dataTable = $('#dataTableExample').DataTable().ajax.json();
+            confirmModal(`Vui lòng xác nhận huỷ ${checkedIds.length} lệnh`, () => cancelAllChargeStatus(checkedIds, dataTable));
+        } else {
+            Lobibox.notify("error", {
+		        msg: 'Vui lòng chọn ít nhất 1 lệnh'
+		    }); 
+        }
+    });
+    
+    function cancelAllChargeStatus(listId, dataTable) {
+	    $.post("<?php homePath()?>ajax/chargependingchangeallstatus.php", {checkedIds: listId}, (data) => {
+	        if(data.wrong_data && data.wrong_data.length > 0) {
+	            data.wrong_data.map(item => {
+	                Lobibox.notify("error", {
+    			        msg: item
+    			    }); 
+	            });
+	        }
+	        
+	        if(data.account && data.account.length > 0) {
+	            data.account.map(item => {
+	                let params = {
+	                    account: item
+	                };
+	                socket.emit('join-room', `reload-account-info-${params.account}`);
+			        socket.emit('reload-account-info', params);
+	            });
+	        }
+	        
+	        if(data.success && data.success.length > 0) {
+	            Lobibox.notify("success", {
+			        msg: `Huỷ ${data.success.length} lệnh (IDs: ${data.success.join(', ')}) thành công`
+			    });
+	        }
+	        
+	        if(socket.connected) {
+			    socket.emit('charge-reload');
+			} else {
+			    reloadChargeList();
+			}
+			
+			checkedIds = [];
+		}, "json");
+	}
+		
+    triggerCheckId = () => {
+        $('.checkid').change(function(){
+            var id = parseInt($(this).attr('check-id'), 10) || 0;
+            isCheck = $(this).is(":checked");
+            if(isCheck) {
+                if(!checkedIds.includes(id)) {
+                    checkedIds.push(id);
+                }
+            } else {
+                if(checkedIds.includes(id)) {
+                   const index = checkedIds.indexOf(id);
+                    if (index > -1) {
+                      checkedIds.splice(index, 1);
+                    }
+                }
+            }
+            console.log(checkedIds);
+            $('#dataTableExample').DataTable().draw();//re-render table
+        });
     }
 
     function loadPayLogs(isFilter = false) {
@@ -253,8 +336,17 @@ $(document).ready(function() {
 		                d.status     = $('#typeCard').val();
 		            }
 		        },
-	        "order": [[ 2, "desc" ]],
+	        "order": [[ 3, "desc" ]],
 	        "columns": [
+	            {
+		                "orderable":      false,
+		                "data":           "selectbox",
+		                "searchable" : false,
+    	                render: function(data, type, row, meta) {
+    	                    var checked = checkedIds.includes(row.id);
+    	                    return `<input type="checkbox" class="checkid" check-id="${row.id}" id="checked-${row.id}" name="checked-${row.id}" value="checked" ${checked ? "checked" : ""}>`;
+    	                }
+	            },
 	            {
                     "class":          "details-control",
                     "orderable":      false,
@@ -305,11 +397,14 @@ $(document).ready(function() {
             }
         } );
         
+        
         // On each draw, loop over the `detailRows` array and show any child rows
         dt.on( 'draw', function () {
             $.each( detailRows, function ( i, id ) {
                 $('#'+id+' td.details-control').trigger( 'click' );
+                // $('#checkAll').trigger( 'change' );
             } );
+            triggerCheckId();
             
             $('.btn-duyet').click(function() {
                 var tr = $(this).closest('tr');
@@ -392,8 +487,8 @@ $(document).ready(function() {
 		}
 		
 		 dt.on( 'draw', function () {
-		     console.log('draw');
-		     console.log(dt.ajax.json());
+		  //   console.log('draw');
+		  //   console.log(dt.ajax.json());
 		     if(dt.ajax.json()) {
                 var chiTietDoanhThuBody = "";
                 var dataJson = dt.ajax.json();

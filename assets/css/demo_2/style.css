@@ -11351,7 +11351,7 @@ input[type="button"].btn-block {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  word-wrap: break-word;
+  word-wrap: normal;
   background-color: #0c1427;
   background-clip: border-box;
   border: 1px solid #172340;

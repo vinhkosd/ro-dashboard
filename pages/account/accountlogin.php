@@ -39,6 +39,7 @@ validateLogin(true, false);//check account login
                             <th>ID</th>
     						<th>AccID</th>
     						<th>Tài khoản</th>
+    						<th>device</th>
     						<th>LoginDate</th>
     						<th>Email</th>
     						<th>Money</th>
@@ -141,7 +142,12 @@ $(document).ready(function() {
 	            { "data": "id", "searchable" : false },
 	            { "data": "accid" },
 	            { "data": "account" },
-	            { "data": "logindate" , "searchable" : false },
+	            { "data": "device" },
+	            { "data": "timestamp" , "searchable" : false,
+                    render: function(data, type, row, meta) {
+	                    return moment(data*1000).format('DD/MM/YYYY HH:mm:ss');
+                	} 
+	            },
 	            { "data": "email" },
 	            { "data": "money" , "searchable" : false },
 	            { "data": "old_email" },
@@ -199,6 +205,53 @@ $(document).ready(function() {
     $('#reloadDataButton').click(function(e, t) {
         loadPayLogs(); 
     })
+    var myLineChart = new Chart($('#chartjsPie'), {
+		        type: 'pie',
+		        data: {
+		            labels: ["", ""],
+		            datasets: [{
+		                label: "USD",
+		                backgroundColor: ["#f77eb9","#4d8af0"],
+		                data: [0, 0]
+		            }]
+		        }
+		    });
+    
+    function loadChartPie() {
+				var params = {
+	                fromDate: $('#fromDate input').val(),
+	                toDate: $('#toDate input').val()
+	            };
+	            var label = [];
+	            var dataChart= [];
+				$.post("<?php homePath()?>ajax/getlogincountbydevice.php", params, (data) => {
+				    data.map(item => {
+						label.push(item['device']);
+						dataChart.push(item['count']);
+					});
+					myLineChart.destroy();
+		            myLineChart = new Chart($('#chartjsPie'), {
+		                type: 'pie',
+		                data: {
+		                    labels: label,
+		                    datasets: [{
+		                        label: "Thiết bị",
+		                        backgroundColor: [
+							      'rgb(255, 99, 132)',
+							      'rgb(75, 192, 192)',
+							      'rgb(255, 205, 86)',
+							      'rgb(201, 203, 207)',
+							      'rgb(54, 162, 235)'
+							    ],
+		                        data: dataChart
+		                    }]
+		                }
+		            });
+				}, "json");
+		            
+		    }
+		    
+		    loadChartPie();
 });
 
 </script>

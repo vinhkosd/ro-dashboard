@@ -283,10 +283,10 @@ use Carbon\Carbon;
                     <div class="row">
                       <div class="col-6 col-md-12 col-xl-5">
                       <?php
-                        $countLoginToday = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfDay(), Carbon::now()->endOfDay()])->distinct('accid')->count();
-                        $countLoginYesterday = AccountLogin::whereBetween('logindate', [Carbon::yesterday()->startOfDay(), Carbon::yesterday()->endOfDay()])->distinct('accid')->count();
-                        $countLoginWeek = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->distinct('accid')->count();
-                        $countLoginMonth = AccountLogin::whereBetween('logindate', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])->distinct('accid')->count();
+                        $countLoginToday = AccountLogin::whereBetween('timestamp', [Carbon::now()->startOfDay()->timestamp, Carbon::now()->endOfDay()->timestamp])->distinct('accid')->count();
+                        $countLoginYesterday = AccountLogin::whereBetween('timestamp', [Carbon::yesterday()->startOfDay()->timestamp, Carbon::yesterday()->endOfDay()->timestamp])->distinct('accid')->count();
+                        $countLoginWeek = AccountLogin::whereBetween('timestamp', [Carbon::now()->startOfWeek()->timestamp, Carbon::now()->endOfWeek()->timestamp])->distinct('accid')->count();
+                        $countLoginMonth = AccountLogin::whereBetween('timestamp', [Carbon::now()->startOfMonth()->timestamp, Carbon::now()->endOfMonth()->timestamp])->distinct('accid')->count();
                       ?>
                         <h3 class="mb-2"><?php echo number_format($countLoginToday);?></h3>
                       </div>
